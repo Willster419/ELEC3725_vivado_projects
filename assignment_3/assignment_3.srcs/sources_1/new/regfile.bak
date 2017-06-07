@@ -1,0 +1,39 @@
+`timescale 1ns / 1ps
+
+module regfile(
+  input [31:0] Aselect,//select the register index to read from to store into abus
+  input [31:0] Bselect,//select the register index to read from to store into bbus
+  input [31:0] Dselect,//select the register to write to from dbus
+  input [31:0] dbus,//data in
+  output [31:0] abus,//data out
+  output [31:0] bbus,//data out
+  input clk
+  );
+  DNegflipFlop myFlips[31:0](//32 wide register
+      .dbus(dbus),
+      .clk(clk),
+      .abus(abus),
+      .Dselect(Dselect),
+      .Bselect(Bselect),
+      .Aselect(Aselect),
+      .bbus(bbus)
+    );
+    assign abus = Aselect[0] ? 32'b0 : 32'bz;//in case it's the 0
+    assign bbus = Bselect[0] ? 32'b0 : 32'bz;
+  endmodule
+  //negedge sensitive flipflop module flip flop module
+  module DNegflipFlop(dbus, clk, abus, Dselect, Bselect, Aselect, bbus);
+    input [31:0] dbus;
+    input Dselect;//the select write bit for this register
+    input Bselect;//the select read bit for this register
+    input Aselect;
+    output [31:0] abus;
+    output [31:0] bbus;
+    input clk;
+    reg [31:0] data;
+    always @(negedge clk) begin
+      data = Dselect ? dbus : 32'bz;
+    end
+    assign abus = Aselect ? data : 32'bz;
+    assign bbus = Bselect ? data : 32'bz;
+  endmodule

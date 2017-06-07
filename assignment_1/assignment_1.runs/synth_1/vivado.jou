@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Vivado v2016.4 (64-bit)
+# SW Build 1756540 on Mon Jan 23 19:11:23 MST 2017
+# IP Build 1755317 on Mon Jan 23 20:30:07 MST 2017
+# Start of session at: Mon Jun 05 02:51:13 2017
+# Process ID: 16032
+# Current directory: C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Computer Arch and Advanced Digital Circuit/vivado/assignment_1/assignment_1.runs/synth_1
+# Command line: vivado.exe -log alu32_testbench.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source alu32_testbench.tcl
+# Log file: C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Computer Arch and Advanced Digital Circuit/vivado/assignment_1/assignment_1.runs/synth_1/alu32_testbench.vds
+# Journal file: C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Computer Arch and Advanced Digital Circuit/vivado/assignment_1/assignment_1.runs/synth_1\vivado.jou
+#-----------------------------------------------------------
+source alu32_testbench.tcl -notrace

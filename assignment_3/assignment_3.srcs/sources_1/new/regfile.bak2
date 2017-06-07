@@ -1,0 +1,309 @@
+`timescale 1ns / 1ps
+
+module regfile(
+  input [31:0] Aselect,
+  input [31:0] Bselect,
+  input [31:0] Dselect,
+  input [31:0] dbus,
+  output [31:0] abus,
+  output [31:0] bbus,
+  input clk
+  );
+  assign abus = Aselect[0] ? 32'b0 : 32'bz;
+  assign bbus = Bselect[0] ? 32'b0 : 32'bz;
+  DNegflipFlop myFlips1(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[1]),
+    .Bselect(Bselect[1]),
+    .Aselect(Aselect[1]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips2(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[2]),
+    .Bselect(Bselect[2]),
+    .Aselect(Aselect[2]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips3(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[3]),
+    .Bselect(Bselect[3]),
+    .Aselect(Aselect[3]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips4(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[4]),
+    .Bselect(Bselect[4]),
+    .Aselect(Aselect[4]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips5(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[5]),
+    .Bselect(Bselect[5]),
+    .Aselect(Aselect[5]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips6(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[6]),
+    .Bselect(Bselect[6]),
+    .Aselect(Aselect[6]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips7(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[7]),
+    .Bselect(Bselect[7]),
+    .Aselect(Aselect[7]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips8(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[8]),
+    .Bselect(Bselect[8]),
+    .Aselect(Aselect[8]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips9(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[9]),
+    .Bselect(Bselect[9]),
+    .Aselect(Aselect[9]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips10(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[10]),
+    .Bselect(Bselect[10]),
+    .Aselect(Aselect[10]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips11(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[11]),
+    .Bselect(Bselect[11]),
+    .Aselect(Aselect[11]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips12(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[12]),
+    .Bselect(Bselect[12]),
+    .Aselect(Aselect[12]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips13(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[13]),
+    .Bselect(Bselect[13]),
+    .Aselect(Aselect[13]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips14(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[14]),
+    .Bselect(Bselect[14]),
+    .Aselect(Aselect[14]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips15(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[15]),
+    .Bselect(Bselect[15]),
+    .Aselect(Aselect[15]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips16(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[16]),
+    .Bselect(Bselect[16]),
+    .Aselect(Aselect[16]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips17(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[17]),
+    .Bselect(Bselect[17]),
+    .Aselect(Aselect[17]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips18(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[18]),
+    .Bselect(Bselect[18]),
+    .Aselect(Aselect[18]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips19(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[19]),
+    .Bselect(Bselect[19]),
+    .Aselect(Aselect[19]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips20(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[20]),
+    .Bselect(Bselect[20]),
+    .Aselect(Aselect[20]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips21(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[21]),
+    .Bselect(Bselect[21]),
+    .Aselect(Aselect[21]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips22(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[22]),
+    .Bselect(Bselect[22]),
+    .Aselect(Aselect[22]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips23(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[23]),
+    .Bselect(Bselect[23]),
+    .Aselect(Aselect[23]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips24(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[24]),
+    .Bselect(Bselect[24]),
+    .Aselect(Aselect[24]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips25(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[25]),
+    .Bselect(Bselect[25]),
+    .Aselect(Aselect[25]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips26(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[26]),
+    .Bselect(Bselect[26]),
+    .Aselect(Aselect[26]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips27(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[27]),
+    .Bselect(Bselect[27]),
+    .Aselect(Aselect[27]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips28(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[28]),
+    .Bselect(Bselect[28]),
+    .Aselect(Aselect[28]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips29(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[29]),
+    .Bselect(Bselect[29]),
+    .Aselect(Aselect[29]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips30(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[30]),
+    .Bselect(Bselect[30]),
+    .Aselect(Aselect[30]),
+    .bbus(bbus)
+  );
+  DNegflipFlop myFlips31(
+    .dbus(dbus),
+    .clk(clk),
+    .abus(abus),
+    .Dselect(Dselect[31]),
+    .Bselect(Bselect[31]),
+    .Aselect(Aselect[31]),
+    .bbus(bbus)
+  );
+endmodule
+//negedge sensitive flipflop module flip flop module
+module DNegflipFlop(dbus, clk, abus, Dselect, Bselect, Aselect, bbus);
+  input [31:0] dbus;
+  input Dselect;
+  input Bselect;
+  input Aselect;
+  output [31:0] abus;
+  output [31:0] bbus;
+  input clk;
+  reg [31:0] dataOut;
+  always @(posedge Dselect) begin
+    dataOut = dbus;
+  end
+  assign abus = Aselect ? dataOut : 32'bz;
+  assign bbus = Bselect ? dataOut : 32'bz;
+endmodule
