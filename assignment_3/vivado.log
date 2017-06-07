@@ -2,17 +2,16 @@
 # Vivado v2016.4 (64-bit)
 # SW Build 1756540 on Mon Jan 23 19:11:23 MST 2017
 # IP Build 1755317 on Mon Jan 23 20:30:07 MST 2017
-# Start of session at: Wed Jun 07 01:02:49 2017
-# Process ID: 19436
-# Current directory: C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3
-# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent17488 C:\Users\widerw\OneDrive - Wentworth Institute of Technology\College\2_Junior\Semester 2\Comp Arch and Adv Dig Circ\vivado\assignment_3\assignment_3.xpr
-# Log file: C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/vivado.log
-# Journal file: C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3\vivado.jou
+# Start of session at: Wed Jun 07 01:21:29 2017
+# Process ID: 13752
+# Current directory: C:/Users/widerw/ELEC3725_vivado_projects/assignment_3
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent13600 C:\Users\widerw\ELEC3725_vivado_projects\assignment_3\assignment_3.xpr
+# Log file: C:/Users/widerw/ELEC3725_vivado_projects/assignment_3/vivado.log
+# Journal file: C:/Users/widerw/ELEC3725_vivado_projects/assignment_3\vivado.jou
 #-----------------------------------------------------------
 start_gui
-open_project {C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/assignment_3.xpr}
-INFO: [ProjectBase 1-489] The host OS only allows 260 characters in a normal path. The project is stored in a path with more than 80 characters. If you experience issues with IP, Block Designs, or files not being found, please consider moving the project to a location with a shorter path. Alternately consider using the OS subst command to map part of the path to a drive letter.
-Current project path is 'C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3'
+open_project C:/Users/widerw/ELEC3725_vivado_projects/assignment_3/assignment_3.xpr
+INFO: [Project 1-313] Project file moved from 'C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3' since last save.
 Scanning sources...
 Finished scanning sources
 INFO: [IP_Flow 19-234] Refreshing IP repositories
@@ -24,18 +23,18 @@ INFO: [USF-XSim-37] Inspecting design source files for 'regfil_testbench' in fil
 INFO: [USF-XSim-97] Finding global include files...
 INFO: [USF-XSim-98] Fetching design files from 'sim_1'...
 INFO: [USF-XSim-2] XSim::Compile design
-INFO: [USF-XSim-61] Executing 'COMPILE and ANALYZE' step in 'C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/assignment_3.sim/sim_1/behav'
+INFO: [USF-XSim-61] Executing 'COMPILE and ANALYZE' step in 'C:/Users/widerw/ELEC3725_vivado_projects/assignment_3/assignment_3.sim/sim_1/behav'
 "xvlog -m64 --relax -prj regfil_testbench_vlog.prj"
-INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/assignment_3.srcs/sources_1/new/regfile.v" into library xil_defaultlib
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/widerw/ELEC3725_vivado_projects/assignment_3/assignment_3.srcs/sources_1/new/regfile.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module regfile
 INFO: [VRFC 10-311] analyzing module DNegflipFlop
-INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/regfil_testbench.v" into library xil_defaultlib
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/widerw/ELEC3725_vivado_projects/assignment_3/regfil_testbench.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module regfil_testbench
-INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/assignment_3.sim/sim_1/behav/glbl.v" into library xil_defaultlib
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/widerw/ELEC3725_vivado_projects/assignment_3/assignment_3.sim/sim_1/behav/glbl.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module glbl
 INFO: [USF-XSim-69] 'compile' step finished in '1' seconds
 INFO: [USF-XSim-3] XSim::Elaborate design
-INFO: [USF-XSim-61] Executing 'ELABORATE' step in 'C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/assignment_3.sim/sim_1/behav'
+INFO: [USF-XSim-61] Executing 'ELABORATE' step in 'C:/Users/widerw/ELEC3725_vivado_projects/assignment_3/assignment_3.sim/sim_1/behav'
 Vivado Simulator 2016.4
 Copyright 1986-1999, 2001-2016 Xilinx, Inc. All Rights Reserved.
 Running: C:/Xilinx/Vivado/2016.4/bin/unwrapped/win64.o/xelab.exe -wto 9480e2a32a5040a291cecae5be0b3a21 --debug typical --relax --mt 2 -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip --snapshot regfil_testbench_behav xil_defaultlib.regfil_testbench xil_defaultlib.glbl -log elaborate.log 
@@ -50,11 +49,18 @@ Compiling module xil_defaultlib.regfile_default
 Compiling module xil_defaultlib.regfil_testbench
 Compiling module xil_defaultlib.glbl
 Built simulation snapshot regfil_testbench_behav
-ERROR: [Common 17-165] Too many positional options when parsing '-notrace', please type 'webtalk -help' for usage info.
 
-INFO: [USF-XSim-69] 'elaborate' step finished in '2' seconds
+****** Webtalk v2016.4 (64-bit)
+  **** SW Build 1756540 on Mon Jan 23 19:11:23 MST 2017
+  **** IP Build 1755317 on Mon Jan 23 20:30:07 MST 2017
+    ** Copyright 1986-2016 Xilinx, Inc. All Rights Reserved.
+
+source C:/Users/widerw/ELEC3725_vivado_projects/assignment_3/assignment_3.sim/sim_1/behav/xsim.dir/regfil_testbench_behav/webtalk/xsim_webtalk.tcl -notrace
+INFO: [Common 17-186] 'C:/Users/widerw/ELEC3725_vivado_projects/assignment_3/assignment_3.sim/sim_1/behav/xsim.dir/regfil_testbench_behav/webtalk/usage_statistics_ext_xsim.xml' has been successfully sent to Xilinx on Wed Jun 07 01:22:30 2017. For additional details about this file, please refer to the WebTalk help file at C:/Xilinx/Vivado/2016.4/doc/webtalk_introduction.html.
+INFO: [Common 17-206] Exiting Webtalk at Wed Jun 07 01:22:30 2017...
+INFO: [USF-XSim-69] 'elaborate' step finished in '4' seconds
 INFO: [USF-XSim-4] XSim::Simulate design
-INFO: [USF-XSim-61] Executing 'SIMULATE' step in 'C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/assignment_3.sim/sim_1/behav'
+INFO: [USF-XSim-61] Executing 'SIMULATE' step in 'C:/Users/widerw/ELEC3725_vivado_projects/assignment_3/assignment_3.sim/sim_1/behav'
 INFO: [USF-XSim-98] *** Running xsim
    with args "regfil_testbench_behav -key {Behavioral:sim_1:Functional:regfil_testbench} -tclbatch {regfil_testbench.tcl} -log {simulate.log}"
 INFO: [USF-XSim-8] Loading simulator feature
@@ -465,50 +471,8 @@ Time=    1000.0ns
 
 INFO: [USF-XSim-96] XSim completed. Design snapshot 'regfil_testbench_behav' loaded.
 INFO: [USF-XSim-97] XSim simulation ran for 1000ns
-launch_simulation: Time (s): cpu = 00:00:04 ; elapsed = 00:00:06 . Memory (MB): peak = 788.203 ; gain = 2.727
-add_bp {C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/regfil_testbench.v} 175
-add_bp {C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/regfil_testbench.v} 166
-add_bp {C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/regfil_testbench.v} 172
-remove_bps -file {C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/regfil_testbench.v} -line 175
-relaunch_sim
-INFO: [SIM-utils-51] Simulation object is 'sim_1'
-INFO: [USF-XSim-37] Inspecting design source files for 'regfil_testbench' in fileset 'sim_1'...
-INFO: [USF-XSim-97] Finding global include files...
-INFO: [USF-XSim-98] Fetching design files from 'sim_1'...
-INFO: [USF-XSim-2] XSim::Compile design
-INFO: [USF-XSim-61] Executing 'COMPILE and ANALYZE' step in 'C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/assignment_3.sim/sim_1/behav'
-"xvlog -m64 --relax -prj regfil_testbench_vlog.prj"
-INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/assignment_3.srcs/sources_1/new/regfile.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module regfile
-INFO: [VRFC 10-311] analyzing module DNegflipFlop
-INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/regfil_testbench.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module regfil_testbench
-INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/assignment_3.sim/sim_1/behav/glbl.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module glbl
-INFO: [USF-XSim-69] 'compile' step finished in '1' seconds
-INFO: [USF-XSim-3] XSim::Elaborate design
-INFO: [USF-XSim-61] Executing 'ELABORATE' step in 'C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/assignment_3.sim/sim_1/behav'
-Vivado Simulator 2016.4
-Copyright 1986-1999, 2001-2016 Xilinx, Inc. All Rights Reserved.
-Running: C:/Xilinx/Vivado/2016.4/bin/unwrapped/win64.o/xelab.exe -wto 9480e2a32a5040a291cecae5be0b3a21 --debug typical --relax --mt 2 -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip --snapshot regfil_testbench_behav xil_defaultlib.regfil_testbench xil_defaultlib.glbl -log elaborate.log 
-Using 2 slave threads.
-Starting static elaboration
-Completed static elaboration
-Starting simulation data flow analysis
-Completed simulation data flow analysis
-Time Resolution for simulation is 1ps
-Compiling module xil_defaultlib.DNegflipFlop
-Compiling module xil_defaultlib.regfile_default
-Compiling module xil_defaultlib.regfil_testbench
-Compiling module xil_defaultlib.glbl
-Built simulation snapshot regfil_testbench_behav
-INFO: [USF-XSim-69] 'elaborate' step finished in '2' seconds
-Vivado Simulator 2016.4
-Time resolution is 1 ps
-ERROR: [Simulator 45-7] No such file 'C:/Users/widerw/OneDrive' in the design.
-ERROR: [Common 17-69] Command failed: ERROR: [Simulator 45-7] No such file 'C:/Users/widerw/OneDrive' in the design.
-
+launch_simulation: Time (s): cpu = 00:00:06 ; elapsed = 00:00:09 . Memory (MB): peak = 823.418 ; gain = 0.000
 close_sim
 INFO: [Simtcl 6-16] Simulation closed
 exit
-INFO: [Common 17-206] Exiting Vivado at Wed Jun 07 01:06:31 2017...
+INFO: [Common 17-206] Exiting Vivado at Wed Jun 07 01:22:50 2017...

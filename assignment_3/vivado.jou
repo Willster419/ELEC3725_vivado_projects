@@ -2,20 +2,15 @@
 # Vivado v2016.4 (64-bit)
 # SW Build 1756540 on Mon Jan 23 19:11:23 MST 2017
 # IP Build 1755317 on Mon Jan 23 20:30:07 MST 2017
-# Start of session at: Wed Jun 07 01:02:49 2017
-# Process ID: 19436
-# Current directory: C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3
-# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent17488 C:\Users\widerw\OneDrive - Wentworth Institute of Technology\College\2_Junior\Semester 2\Comp Arch and Adv Dig Circ\vivado\assignment_3\assignment_3.xpr
-# Log file: C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/vivado.log
-# Journal file: C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3\vivado.jou
+# Start of session at: Wed Jun 07 01:21:29 2017
+# Process ID: 13752
+# Current directory: C:/Users/widerw/ELEC3725_vivado_projects/assignment_3
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent13600 C:\Users\widerw\ELEC3725_vivado_projects\assignment_3\assignment_3.xpr
+# Log file: C:/Users/widerw/ELEC3725_vivado_projects/assignment_3/vivado.log
+# Journal file: C:/Users/widerw/ELEC3725_vivado_projects/assignment_3\vivado.jou
 #-----------------------------------------------------------
 start_gui
-open_project {C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/assignment_3.xpr}
+open_project C:/Users/widerw/ELEC3725_vivado_projects/assignment_3/assignment_3.xpr
 launch_simulation
 source regfil_testbench.tcl
-add_bp {C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/regfil_testbench.v} 175
-add_bp {C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/regfil_testbench.v} 166
-add_bp {C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/regfil_testbench.v} 172
-remove_bps -file {C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_3/regfil_testbench.v} -line 175
-relaunch_sim
 close_sim
