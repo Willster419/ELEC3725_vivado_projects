@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="regfil_testbench_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="regfil_testbench" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="1128172500fs"></ZoomStartTime>
+      <ZoomEndTime time="1331342530fs"></ZoomEndTime>
+      <Cursor1Time time="1625000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="175"></NameColumnWidth>
+      <ValueColumnWidth column_width="146"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="26" />
+   <wvobject fp_name="/regfil_testbench/Aselect" type="array">
+      <obj_property name="ElementShortName">Aselect[31:0]</obj_property>
+      <obj_property name="ObjectShortName">Aselect[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/Bselect" type="array">
+      <obj_property name="ElementShortName">Bselect[31:0]</obj_property>
+      <obj_property name="ObjectShortName">Bselect[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/Dselect" type="array">
+      <obj_property name="ElementShortName">Dselect[31:0]</obj_property>
+      <obj_property name="ObjectShortName">Dselect[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/dbus" type="array">
+      <obj_property name="ElementShortName">dbus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dbus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/abus" type="array">
+      <obj_property name="ElementShortName">abus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">abus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/bbus" type="array">
+      <obj_property name="ElementShortName">bbus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">bbus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/dontcare" type="array">
+      <obj_property name="ElementShortName">dontcare[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dontcare[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/ref_abus" type="array">
+      <obj_property name="ElementShortName">ref_abus[0:31][31:0]</obj_property>
+      <obj_property name="ObjectShortName">ref_abus[0:31][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/ref_bbus" type="array">
+      <obj_property name="ElementShortName">ref_bbus[0:31][31:0]</obj_property>
+      <obj_property name="ObjectShortName">ref_bbus[0:31][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/stm_dbus" type="array">
+      <obj_property name="ElementShortName">stm_dbus[0:31][31:0]</obj_property>
+      <obj_property name="ObjectShortName">stm_dbus[0:31][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/stm_asel" type="array">
+      <obj_property name="ElementShortName">stm_asel[0:31][31:0]</obj_property>
+      <obj_property name="ObjectShortName">stm_asel[0:31][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/stm_bsel" type="array">
+      <obj_property name="ElementShortName">stm_bsel[0:31][31:0]</obj_property>
+      <obj_property name="ObjectShortName">stm_bsel[0:31][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/stm_dsel" type="array">
+      <obj_property name="ElementShortName">stm_dsel[0:31][31:0]</obj_property>
+      <obj_property name="ObjectShortName">stm_dsel[0:31][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/error" type="array">
+      <obj_property name="ElementShortName">error[31:0]</obj_property>
+      <obj_property name="ObjectShortName">error[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/i" type="array">
+      <obj_property name="ElementShortName">i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">i[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/k" type="array">
+      <obj_property name="ElementShortName">k[31:0]</obj_property>
+      <obj_property name="ObjectShortName">k[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/ntests" type="array">
+      <obj_property name="ElementShortName">ntests[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ntests[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/dut/\myFlips[1] /Aselect" type="logic">
+      <obj_property name="ElementShortName">Aselect</obj_property>
+      <obj_property name="ObjectShortName">Aselect</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/dut/\myFlips[1] /Bselect" type="logic">
+      <obj_property name="ElementShortName">Bselect</obj_property>
+      <obj_property name="ObjectShortName">Bselect</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/dut/\myFlips[1] /Dselect" type="logic">
+      <obj_property name="ElementShortName">Dselect</obj_property>
+      <obj_property name="ObjectShortName">Dselect</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/dut/\myFlips[1] /clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/dut/\myFlips[1] /abus" type="array">
+      <obj_property name="ElementShortName">abus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">abus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/dut/\myFlips[1] /bbus" type="array">
+      <obj_property name="ElementShortName">bbus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">bbus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/dut/\myFlips[1] /dbus" type="array">
+      <obj_property name="ElementShortName">dbus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dbus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/regfil_testbench/dut/\myFlips[1] /data" type="array">
+      <obj_property name="ElementShortName">data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">data[31:0]</obj_property>
+   </wvobject>
+</wave_config>
