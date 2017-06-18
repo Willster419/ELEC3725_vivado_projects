@@ -1,4 +1,3 @@
-`timescale 1ns / 1ps
 /************************
 *  Willard Wider
 *  6-6-17
