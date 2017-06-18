@@ -1,4 +1,4 @@
-INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_2/assignment_2.srcs/sources_1/new/alupipe.v" into library xil_defaultlib
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/widerw/ELEC3725_vivado_projects/assignment_2/assignment_2.srcs/sources_1/new/alupipe.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module alupipe
 INFO: [VRFC 10-311] analyzing module DflipFlop
 INFO: [VRFC 10-311] analyzing module alu32
@@ -9,7 +9,7 @@ INFO: [VRFC 10-311] analyzing module lac2
 INFO: [VRFC 10-311] analyzing module lac3
 INFO: [VRFC 10-311] analyzing module lac4
 INFO: [VRFC 10-311] analyzing module lac5
-INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_2/alupipe_testbench.v" into library xil_defaultlib
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/widerw/ELEC3725_vivado_projects/assignment_2/alupipe_testbench.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module alupipe_testbench
-INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/widerw/OneDrive - Wentworth Institute of Technology/College/2_Junior/Semester 2/Comp Arch and Adv Dig Circ/vivado/assignment_2/assignment_2.sim/sim_1/behav/glbl.v" into library xil_defaultlib
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/widerw/ELEC3725_vivado_projects/assignment_2/assignment_2.sim/sim_1/behav/glbl.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module glbl

@@ -2,10 +2,10 @@
 # Vivado v2016.4 (64-bit)
 # SW Build 1756540 on Mon Jan 23 19:11:23 MST 2017
 # IP Build 1755317 on Mon Jan 23 20:30:07 MST 2017
-# Start of session at: Wed Jun 07 01:21:29 2017
-# Process ID: 13752
+# Start of session at: Tue Jun 13 09:25:00 2017
+# Process ID: 13524
 # Current directory: C:/Users/widerw/ELEC3725_vivado_projects/assignment_3
-# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent13600 C:\Users\widerw\ELEC3725_vivado_projects\assignment_3\assignment_3.xpr
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent12816 C:\Users\widerw\ELEC3725_vivado_projects\assignment_3\assignment_3.xpr
 # Log file: C:/Users/widerw/ELEC3725_vivado_projects/assignment_3/vivado.log
 # Journal file: C:/Users/widerw/ELEC3725_vivado_projects/assignment_3\vivado.jou
 #-----------------------------------------------------------
@@ -13,4 +13,12 @@ start_gui
 open_project C:/Users/widerw/ELEC3725_vivado_projects/assignment_3/assignment_3.xpr
 launch_simulation
 source regfil_testbench.tcl
+run all
+add_wave {{/regfil_testbench/dut/\myFlips[1] }} 
+relaunch_sim
+run all
+close_sim
+launch_simulation
+source regfil_testbench.tcl
+run all
 close_sim
