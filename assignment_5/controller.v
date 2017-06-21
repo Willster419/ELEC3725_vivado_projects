@@ -1,8 +1,8 @@
 /************************
 *  Willard Wider
-*  6-6-17
+*  6-18-17
 *  ELEC3725
-*  alupipe.v
+*  controller.v
 *  building a 32 bit ALU
 ************************/
 module controller(ibus, clk, Cin, Imm, S, Aselect, Bselect, Dselect);
@@ -14,9 +14,145 @@ module controller(ibus, clk, Cin, Imm, S, Aselect, Bselect, Dselect);
   output [2:0] S;
   output Imm;
   output Cin;
-  wire [31:0] IFIDOUT;
-  DflipFlop IFID(.dataIn(ibus), .clk(clk), .dataOut(IFIDOUT));
+  reg immHolder;
+  reg [2:0] S_holder;
+  reg Cin_holder;
+  wire [31:0] IF_ID_OUT;//wire from IF/ID
+  wire [31:0] ID_EX_IN;//wire to ID/EX
+  wire [4:0] rs;//the wire to hold the split output from IF-ID
+  wire [4:0] rt;
+  wire [4:0] rd;
+  wire [5:0] opCode;
+  wire [5:0] funktion;
+  wire [5:0] opCodeThing;
+  wire [5:0] opCodeThing2;
+  wire [31:0] EX_MEM_IN;
+  wire [4:0] muxOut;
+  //pipeline the instruction register, get the output into a wire
+  DflipFlop IFID(.dataIn(ibus), .clk(clk), .dataOut(IF_ID_OUT));
+  assign opCode = IF_ID_OUT[31:26];
+  assign rs = IF_ID_OUT[25:21];
+  assign rt = IF_ID_OUT[20:16];
+  assign rd = IF_ID_OUT[15:11];
+  assign funktion = IF_ID_OUT[5:0];
+  //write the Aselet
+  assign Aselect = 1 << rs;//rs
+  
+  //init
+  initial begin
+    immHolder = 1'bx;//it could be needed i guess
+    Cin_holder = 1'bx;
+    S_holder = 3'bxxx;//*lennyface*
+    //opCodeThing2 = 5'bxxxxx;
+  end
+  //for the change in the opcode which is like always
+  always @(IF_ID_OUT) begin
+  //first mux value is to assume 0
+  immHolder = 1;
+  Cin_holder = 0;
+  //write the cases for the opcode (immediate)
+  case (opCode)
+    6'b000011: begin
+      //addi
+      S_holder = 3'b010;
+    end
+    6'b000010: begin
+      //subi
+      S_holder = 3'b011;
+      Cin_holder = 1;
+    end
+    6'b000001: begin
+      //xori
+      S_holder = 3'b000;
+    end
+    6'b001111: begin
+      //andi
+      S_holder = 3'b110;
+    end
+    6'b001100: begin
+      //ori
+      S_holder = 3'b100;
+    end
+    //if 00000
+    6'b000000: begin
+      //write the mux value here
+      immHolder= 0;
+      //then write the cases for the funct
+      case (funktion)
+        6'b000011: begin
+          //add
+          S_holder = 3'b010;
+        end
+        6'b000010: begin
+          //sub
+          S_holder = 3'b011;
+          Cin_holder = 1;
+        end
+        6'b000001: begin
+          //xor
+          S_holder = 3'b000;
+        end
+        6'b000111: begin
+          //and
+          S_holder = 3'b110;
+        end
+        6'b000100: begin
+          //or
+          S_holder = 3'b100;
+        end
+      endcase
+    end
+  endcase
+  end
+  //write to Bselect
+  //assign Bselect = immHolder? 1 << rt: 32'bx;
+  assign Bselect = immHolder?  32'bx: 1 << rt;
+  //write the input for ID_EX_IN. it's the mux
+  assign muxOut = immHolder? rt:rd;//rd=R=imm low, rt=I=imm high
+  assign ID_EX_IN = 1 << muxOut;
+  assign opCodeThing = {immHolder,S_holder,Cin_holder};
+  DflipFlop2 ID_EX(.dataIn(ID_EX_IN),.clk(clk),.dataOut(EX_MEM_IN),.opCodeThingIn(opCodeThing),.opCodeThingOut(opCodeThing2));
+  //write the final outputs
+  /*
+  output [2:0] S;
+  output Imm;
+  output Cin;
+  */
+  assign Imm = opCodeThing2[4];
+  assign S = opCodeThing2[3:1];
+  assign Cin = opCodeThing2[0];
+  DflipFlop EXMEMm(.dataIn(EX_MEM_IN),.clk(clk),.dataOut(Dselect));
 endmodule
+
+//a mux for selecting which output we will use
+module mux(rtIn, rdIn, imSwitch, out);
+  input [4:0] rtIn;
+  input [4:0] rdIn;
+  input imSwitch;
+  output [31:0] out;
+  wire  [4:0] whichIn;
+  assign whichIn = imSwitch? rtIn : rdIn;
+  signExtend outExtend(.in(whichIn),.out(out));
+  //if imm is high, use rd, else use rt
+endmodule
+
+//opcode and funct decoder
+module opFunctDecode(opcode,funct,immFlag, opCodeOutputThing);
+  input [5:0] opcode;
+  input [5:0] funct;
+  output [11:0] opCodeOutputThing;
+  assign opCodeOutputThing= {opcode,funct};
+  output immFlag;
+  assign immFlag = opcode? 1'b1 : 1'b0;
+endmodule
+
+//sign extension module
+module signExtend(in,out);
+  input [4:0] in;
+  output [31:0] out;
+  assign out = in[4]? {27'b0, in}: {27'b1, in};
+endmodule
+
 //flip flop module. requires a clock cycle to update value
 module DflipFlop(dataIn, clk, dataOut);
   input [31:0] dataIn;
@@ -27,6 +163,22 @@ module DflipFlop(dataIn, clk, dataOut);
     dataOut = dataIn;
   end
 endmodule
+
+//flip flop module that has a thing pass through it. requires a clock cycle to update value
+module DflipFlop2(dataIn, clk, dataOut, opCodeThingIn, opCodeThingOut);
+  input [31:0] dataIn;
+  input clk;
+  output [31:0] dataOut;
+  reg [31:0] dataOut;
+  input [5:0] opCodeThingIn;
+  output [5:0] opCodeThingOut;
+  reg [5:0] opCodeThingOut;
+  always @(posedge clk) begin
+    dataOut = dataIn;
+    opCodeThingOut = opCodeThingIn;
+  end
+endmodule
+
 module regalu(Aselect, Bselect, Dselect, clk, Cin, S, abus, bbus, dbus);
     
     input [31:0] Aselect;
