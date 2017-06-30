@@ -26,3 +26,5 @@ README.txt
 *.type
 *.wdb
 *.xdbg
+*.wdm
+*.tcl

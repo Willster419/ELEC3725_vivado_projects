@@ -11,69 +11,78 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="349000001fs"></ZoomEndTime>
-      <Cursor1Time time="100000000fs"></Cursor1Time>
+      <ZoomStartTime time="1490000000fs"></ZoomStartTime>
+      <ZoomEndTime time="2102000001fs"></ZoomEndTime>
+      <Cursor1Time time="2000000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="175"></NameColumnWidth>
-      <ValueColumnWidth column_width="142"></ValueColumnWidth>
+      <ValueColumnWidth column_width="136"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="14" />
-   <wvobject fp_name="/cpu3_testbench/dut/ibus" type="array">
-      <obj_property name="ElementShortName">ibus[31:0]</obj_property>
-      <obj_property name="ObjectShortName">ibus[31:0]</obj_property>
-   </wvobject>
+   <WVObjectSize size="16" />
    <wvobject fp_name="/cpu3_testbench/dut/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu3_testbench/dut/abusWire" type="array">
-      <obj_property name="ElementShortName">abusWire[31:0]</obj_property>
-      <obj_property name="ObjectShortName">abusWire[31:0]</obj_property>
+   <wvobject fp_name="/cpu3_testbench/error" type="array">
+      <obj_property name="ElementShortName">error[31:0]</obj_property>
+      <obj_property name="ObjectShortName">error[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu3_testbench/dut/abus" type="array">
-      <obj_property name="ElementShortName">abus[31:0]</obj_property>
-      <obj_property name="ObjectShortName">abus[31:0]</obj_property>
+   <wvobject fp_name="/cpu3_testbench/dut/ibusWire" type="array">
+      <obj_property name="ElementShortName">ibusWire[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ibusWire[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu3_testbench/dut/bbusWire" type="array">
-      <obj_property name="ElementShortName">bbusWire[31:0]</obj_property>
-      <obj_property name="ObjectShortName">bbusWire[31:0]</obj_property>
+   <wvobject fp_name="/cpu3_testbench/dut/rs" type="array">
+      <obj_property name="ElementShortName">rs[5:0]</obj_property>
+      <obj_property name="ObjectShortName">rs[5:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu3_testbench/dut/immWire" type="logic">
-      <obj_property name="ElementShortName">immWire</obj_property>
-      <obj_property name="ObjectShortName">immWire</obj_property>
+   <wvobject fp_name="/cpu3_testbench/dut/AselectWire" type="array">
+      <obj_property name="ElementShortName">AselectWire[31:0]</obj_property>
+      <obj_property name="ObjectShortName">AselectWire[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu3_testbench/dut/possible_imm" type="array">
-      <obj_property name="ElementShortName">possible_imm[31:0]</obj_property>
-      <obj_property name="ObjectShortName">possible_imm[31:0]</obj_property>
+   <wvobject fp_name="/cpu3_testbench/dut/abusWire1" type="array">
+      <obj_property name="ElementShortName">abusWire1[31:0]</obj_property>
+      <obj_property name="ObjectShortName">abusWire1[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu3_testbench/dut/bbusWire2" type="array">
-      <obj_property name="ElementShortName">bbusWire2[31:0]</obj_property>
-      <obj_property name="ObjectShortName">bbusWire2[31:0]</obj_property>
+   <wvobject fp_name="/cpu3_testbench/dut/abusWire2" type="array">
+      <obj_property name="ElementShortName">abusWire2[31:0]</obj_property>
+      <obj_property name="ObjectShortName">abusWire2[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu3_testbench/dut/bbus" type="array">
-      <obj_property name="ElementShortName">bbus[31:0]</obj_property>
-      <obj_property name="ObjectShortName">bbus[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/cpu3_testbench/dut/dbusWire" type="array">
-      <obj_property name="ElementShortName">dbusWire[31:0]</obj_property>
-      <obj_property name="ObjectShortName">dbusWire[31:0]</obj_property>
+   <wvobject fp_name="/cpu3_testbench/dut/DselectWire3" type="array">
+      <obj_property name="ElementShortName">DselectWire3[31:0]</obj_property>
+      <obj_property name="ObjectShortName">DselectWire3[31:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/cpu3_testbench/dut/dbus" type="array">
       <obj_property name="ElementShortName">dbus[31:0]</obj_property>
       <obj_property name="ObjectShortName">dbus[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu3_testbench/dut/AselectWire" type="array">
-      <obj_property name="ElementShortName">AselectWire[31:0]</obj_property>
-      <obj_property name="ObjectShortName">AselectWire[31:0]</obj_property>
+   <wvobject fp_name="/cpu3_testbench/dut/Reggie3/\myFlips[0] /Aselect" type="logic">
+      <obj_property name="ElementShortName">Aselect</obj_property>
+      <obj_property name="ObjectShortName">Aselect</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu3_testbench/dut/BselectWire" type="array">
-      <obj_property name="ElementShortName">BselectWire[31:0]</obj_property>
-      <obj_property name="ObjectShortName">BselectWire[31:0]</obj_property>
+   <wvobject fp_name="/cpu3_testbench/dut/Reggie3/\myFlips[0] /abus" type="array">
+      <obj_property name="ElementShortName">abus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">abus[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/cpu3_testbench/dut/DselectWire" type="array">
-      <obj_property name="ElementShortName">DselectWire[31:0]</obj_property>
-      <obj_property name="ObjectShortName">DselectWire[31:0]</obj_property>
+   <wvobject fp_name="/cpu3_testbench/dut/Reggie3/\myFlips[0] /Bselect" type="logic">
+      <obj_property name="ElementShortName">Bselect</obj_property>
+      <obj_property name="ObjectShortName">Bselect</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu3_testbench/dut/Reggie3/\myFlips[0] /bbus" type="array">
+      <obj_property name="ElementShortName">bbus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">bbus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu3_testbench/dut/Reggie3/\myFlips[0] /Dselect" type="logic">
+      <obj_property name="ElementShortName">Dselect</obj_property>
+      <obj_property name="ObjectShortName">Dselect</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu3_testbench/dut/Reggie3/\myFlips[0] /dbus" type="array">
+      <obj_property name="ElementShortName">dbus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dbus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu3_testbench/dut/Reggie3/\myFlips[0] /data" type="array">
+      <obj_property name="ElementShortName">data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">data[31:0]</obj_property>
    </wvobject>
 </wave_config>

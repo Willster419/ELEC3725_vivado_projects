@@ -40,9 +40,9 @@ module controller(ibus, clk, Cin, Imm, S, Aselect, Bselect, Dselect);
   
   //init
   initial begin
-    immHolder = 1'bx;//it could be needed i guess
+    immHolder = 1'bx;
     Cin_holder = 1'bx;
-    S_holder = 3'bxxx;//*lennyface*
+    S_holder = 3'bxxx;
     //opCodeThing2 = 5'bxxxxx;
   end
   //for the change in the opcode which is like always

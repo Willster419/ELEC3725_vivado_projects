@@ -1,269 +1,220 @@
 /************************
 *  Willard Wider
-*  6-18-17
+*  6-29-17
 *  ELEC3725
 *  cpu3.v
 *  building a 32 bit CPU
 ************************/
 module cpu3(ibus,clk,abus,bbus,dbus);
-  input [31:0] ibus;
+  //just a clock
   input clk;
-  output [31:0] abus;
-  output [31:0] bbus;
-  output [31:0] dbus;
-  wire [31:0] AselectWire;
-  wire [31:0] BselectWire;
-  wire [31:0] DselectWire;
-  wire immWire;
-  wire [2:0] SWire;
-  wire CinWire;
-  wire [31:0] abusWire;
-  wire [31:0] bbusWire;
-  wire [31:0] dbusWire;
-  wire [31:0] bbusWire2;
-  wire [31:0] possible_imm;
-  controller complete_control(
-    .ibus(ibus),//in
-    .clk(clk),
-    .Cin(CinWire),//out
-    .Imm(immWire),//out
-    .S(SWire),//out
-    .Aselect(AselectWire),//out
-    .Bselect(BselectWire),//out
-    .Dselect(DselectWire)//out
-    );
-  regfile reggie2(
-    .Aselect(AselectWire),//in
-    .Bselect(BselectWire),//in
-    .Dselect(DselectWire),//in
-    .dbus(dbusWire),//in
-    .bbus(bbusWire),//out
-    .abus(abusWire),//out
-    .clk(clk)
-    );
-    //write the mux here for bselect before it gets fed to the alu
-    //if immediate use that for bbus
-    //but extend the bits of the possible immediate first
-    assign possible_imm = ibus[15]? {16'b1, ibus[15:0]} : {16'b0, ibus[15:0]};
-    assign bbusWire2 = immWire? possible_imm : bbusWire;
-    alupipe alup2(
-    .S(SWire),//in
-    .Cin(CinWire),//in
-    .clk(clk),
-    .abus(abusWire),//in
-    .bbus(bbusWire2),//in
-    .dbus(dbusWire)//out
-    );
-    assign abus = abusWire;
-    assign bbus = bbusWire2;
-    assign dbus = dbusWire;
-endmodule
-
-module controller(ibus, clk, Cin, Imm, S, Aselect, Bselect, Dselect);
-  input [31:0] ibus;
-  input clk;
-  output [31:0] Aselect;
-  output [31:0] Bselect;
-  output [31:0] Dselect;
-  output [2:0] S;
-  output Imm;
-  output Cin;
-  reg immHolder;
-  reg [2:0] S_holder;
-  reg Cin_holder;
-  wire [31:0] IF_ID_OUT;//wire from IF/ID
-  wire [31:0] ID_EX_IN;//wire to ID/EX
-  wire [4:0] rs;//the wire to hold the split output from IF-ID
-  wire [4:0] rt;
-  wire [4:0] rd;
   wire [5:0] opCode;
   wire [5:0] funktion;
-  wire [5:0] opCodeThing;
-  wire [5:0] opCodeThing2;
-  wire [31:0] EX_MEM_IN;
-  wire [4:0] muxOut;
-  //pipeline the instruction register, get the output into a wire
-  DflipFlop IFID(.dataIn(ibus), .clk(clk), .dataOut(IF_ID_OUT));
-  assign opCode = IF_ID_OUT[31:26];
-  assign rs = IF_ID_OUT[25:21];
-  assign rt = IF_ID_OUT[20:16];
-  assign rd = IF_ID_OUT[15:11];
-  assign funktion = IF_ID_OUT[5:0];
-  //write the Aselet
-  assign Aselect = 1 << rs;//rs
-  
+  //ibus
+  input [31:0] ibus;//in for IF_ID
+  wire [31:0] ibusWire;//out for IF_ID
+  //Aselect
+  wire [31:0] AselectWire;//from rs, to regfile
+  wire [5:0] rs;//from ibusWire, to AselectWire
+  //Bselect
+  wire [31:0] BselectWire;//from rt, to regfile
+  wire [5:0] rt;//from ibsuWire, to BselectWire and mxu1
+  //imm select
+  reg immBit1;//from IF_ID(ibusWire), to mux1 and ID_EX
+  wire immBit2;//from ID_EX, to mux2
+  //Dselect
+  wire [31:0] DselectWire1;//from muxOut, to ID_EX
+  wire [5:0] rd;//from ID_EX, to mux1
+  wire [31:0] DselectWire2;//from ID_EX, to EX_MM
+  wire [31:0] DselectWire3;//from EX_MEM, to regfile
+  //abus
+  output [31:0] abus;//from ID_EX, to SIM_OUT
+  wire [31:0] abusWire1;//from regOut, to ID_EX
+  wire [31:0] abusWire2;//from ID_EX, to ALU
+  //bbus
+  output [31:0] bbus;//from mux2Out, to SIM_OUT
+  wire [31:0] bbusWire1;//from regOut, to ID_EX
+  wire [31:0] bbusWire2;//from ID_EX, to mux2
+  //dbus
+  output [31:0] dbus;//from EX_MEM, to SIM_OUT
+  wire [31:0] dbusWire1;//from ALU, to EX_MEM
+  wire [31:0] dbusWire2;//from EM_MEM, to regile
+  //mux2
+  wire [31:0] mux2Out;//from bbusWire2/immWire2, to ALU
+  //immediate
+  wire [31:0] immWire1;//from IF_ID, to ID_EX
+  wire [31:0] immWire2;//from ID_EX, to mux2
+  //S
+  reg [2:0] SWire1;//from IF_ID, to ID_EX
+  wire [2:0] SWire2;//from ID_EX, to ALU
+  //Cin
+  reg CinWire1;//from IF_ID, to ID_EX
+  wire CinWire2;//form ID_EX, to ALU
   //init
   initial begin
-    immHolder = 1'bx;//it could be needed i guess
-    Cin_holder = 1'bx;
-    S_holder = 3'bxxx;//*lennyface*
-    //opCodeThing2 = 5'bxxxxx;
+    immBit1 = 1'bx;
+    CinWire1 = 1'bx;
+    SWire1 = 3'bxxx;
   end
+  //latch for pipeline 1(IF_ID)
+  //module pipeline_1_latch(clk, ibus, ibusWire);
+  pipeline_1_latch IF_ID(.clk(clk),.ibus(ibus),.ibusWire(ibusWire));
+  //PIPELINE_1_START
+  //decode the input command
+  assign opCode = ibusWire[31:26];
+  assign rs = ibusWire[25:21];
+  assign rt = ibusWire[20:16];
+  assign rd = ibusWire[15:11];
+  assign funktion = ibusWire[5:0];
+  assign immWire1 = ibusWire[15]? {16'b1111111111111111,ibusWire[15:0]} : {16'b0000000000000000,ibusWire[15:0]};
   //for the change in the opcode which is like always
-  always @(IF_ID_OUT) begin
+  always @(ibusWire) begin
   //first mux value is to assume 0
-  immHolder = 1;
-  Cin_holder = 0;
+  immBit1 = 1;
+  CinWire1 = 0;
   //write the cases for the opcode (immediate)
   case (opCode)
     6'b000011: begin
       //addi
-      S_holder = 3'b010;
+      SWire1 = 3'b010;
     end
     6'b000010: begin
       //subi
-      S_holder = 3'b011;
-      Cin_holder = 1;
+      SWire1 = 3'b011;
+      CinWire1 = 1;
     end
     6'b000001: begin
       //xori
-      S_holder = 3'b000;
+      SWire1 = 3'b000;
     end
     6'b001111: begin
       //andi
-      S_holder = 3'b110;
+      SWire1 = 3'b110;
     end
     6'b001100: begin
       //ori
-      S_holder = 3'b100;
+      SWire1 = 3'b100;
     end
     //if 00000
     6'b000000: begin
       //write the mux value here
-      immHolder= 0;
+      immBit1= 0;
       //then write the cases for the funct
       case (funktion)
         6'b000011: begin
           //add
-          S_holder = 3'b010;
+          SWire1 = 3'b010;
         end
         6'b000010: begin
           //sub
-          S_holder = 3'b011;
-          Cin_holder = 1;
+          SWire1 = 3'b011;
+          CinWire1 = 1;
         end
         6'b000001: begin
           //xor
-          S_holder = 3'b000;
+          SWire1 = 3'b000;
         end
         6'b000111: begin
           //and
-          S_holder = 3'b110;
+          SWire1 = 3'b110;
         end
         6'b000100: begin
           //or
-          S_holder = 3'b100;
+          SWire1 = 3'b100;
         end
       endcase
     end
   endcase
   end
-  //write to Bselect
-  //assign Bselect = immHolder? 1 << rt: 32'bx;
-  assign Bselect = immHolder?  32'bx: 1 << rt;
-  //write the input for ID_EX_IN. it's the mux
-  assign muxOut = immHolder? rt:rd;//rd=R=imm low, rt=I=imm high
-  assign ID_EX_IN = 1 << muxOut;
-  assign opCodeThing = {immHolder,S_holder,Cin_holder};
-  DflipFlop2 ID_EX(.dataIn(ID_EX_IN),.clk(clk),.dataOut(EX_MEM_IN),.opCodeThingIn(opCodeThing),.opCodeThingOut(opCodeThing2));
-  //write the final outputs
+  //write the select lines
+  assign AselectWire = 1 << rs;
+  //only write to Bselect for real if it's actually goign to use Bselect
+  //i don't think this line matters but i feel like it's good pratice
+  //assign BselectWire = immBit1?  32'hxxxxxxxx: 1 << rt;
+  assign BselectWire = 1 << rt;
+  //mux1
+  //Rd for R, imm = false
+  //Rt for I, imm = true
+  assign DselectWire1 = immBit1? 1<<rt : 1<<rd;
   /*
-  output [2:0] S;
-  output Imm;
-  output Cin;
+  module regfile(
+  input [31:0] Aselect,//select the register index to read from to store into abus
+  input [31:0] Bselect,//select the register index to read from to store into bbus
+  input [31:0] Dselect,//select the register to write to from dbus
+  input [31:0] dbus,//data in
+  output [31:0] abus,//data out
+  output [31:0] bbus,//data out
+  input clk
+  );
   */
-  assign Imm = opCodeThing2[4];
-  assign S = opCodeThing2[3:1];
-  assign Cin = opCodeThing2[0];
-  DflipFlop EXMEMm(.dataIn(EX_MEM_IN),.clk(clk),.dataOut(Dselect));
+  regfile Reggie3(.clk(clk),.Aselect(AselectWire),.Bselect(BselectWire),.Dselect(DselectWire3),.abus(abusWire1),.bbus(bbusWire1),.dbus(dbusWire2));
+  //PIPELINE_1_END
+  //latch for pipeline 2(ID_EX)
+  //module pipeline_2_latch(clk, abusWire1, bbusWire1, DselectWire1, immWire1, SWire1, CinWire1,immBit1,abusWire2,bbusWire2,immWire2,CinWire2,DselectWire2,immBit2);
+  pipeline_2_latch ED_EX(.clk(clk),.abusWire1(abusWire1),.bbusWire1(bbusWire1),.DselectWire1(DselectWire1),.immWire1(immWire1),.SWire1(SWire1),.CinWire1(CinWire1),.immBit1(immBit1),.abusWire2(abusWire2),.bbusWire2(bbusWire2),.immWire2(immWire2),.CinWire2(CinWire2),.DselectWire2(DselectWire2),.immBit2(immBit2),.SWire2);
+  //PIPELINE_2_START
+  //assign abus output
+  assign abus = abusWire2;
+  //mux2
+  //immWire for true, Bselet for false
+  assign mux2Out = immBit2? immWire2: bbusWire2;
+  //assign bbus output
+  assign bbus = mux2Out;
+  //make the ALU
+  //module alu32 (d, Cout, V, a, b, Cin, S);
+  alu32 literallyLogic(.d(dbusWire1),.a(abusWire2),.b(mux2Out),.Cin(CinWire2),.S(SWire2));
+  //PIPELINE_2_END
+  //latch for pipeline 3(EX_MEM)
+  //module pipeline_3_latch(clk, dbusWire1, DselectWire2, dbusWire2, DselectWire3);
+  pipeline_3_latch EX_MEME (.clk(clk),.dbusWire1(dbusWire1),.DselectWire2(DselectWire2),.dbusWire2(dbusWire2),.DselectWire3(DselectWire3));
+  //PIPELINE_3_SRART
+  //assign out dbus
+  assign dbus = dbusWire2;
+  //PIPELINE_3_END
+  
 endmodule
-
-//a mux for selecting which output we will use
-module mux(rtIn, rdIn, imSwitch, out);
-  input [4:0] rtIn;
-  input [4:0] rdIn;
-  input imSwitch;
-  output [31:0] out;
-  wire  [4:0] whichIn;
-  assign whichIn = imSwitch? rtIn : rdIn;
-  signExtend outExtend(.in(whichIn),.out(out));
-  //if imm is high, use rd, else use rt
-endmodule
-
-//opcode and funct decoder
-module opFunctDecode(opcode,funct,immFlag, opCodeOutputThing);
-  input [5:0] opcode;
-  input [5:0] funct;
-  output [11:0] opCodeOutputThing;
-  assign opCodeOutputThing= {opcode,funct};
-  output immFlag;
-  assign immFlag = opcode? 1'b1 : 1'b0;
-endmodule
-
-//sign extension module
-module signExtend(in,out);
-  input [4:0] in;
-  output [31:0] out;
-  assign out = in[4]? {27'b0, in}: {27'b1, in};
-endmodule
-/*
-//flip flop module. requires a clock cycle to update value
-module DflipFlop(dataIn, clk, dataOut);
-  input [31:0] dataIn;
+//phase 1 pipeline latch(IF_ID)
+module pipeline_1_latch(clk, ibus, ibusWire);
+  input [31:0] ibus;
   input clk;
-  output [31:0] dataOut;
-  reg [31:0] dataOut;
+  output [31:0] ibusWire;
+  reg [31:0] ibusWire;
   always @(posedge clk) begin
-    dataOut = dataIn;
+    ibusWire = ibus;
   end
 endmodule
-*/
-//flip flop module that has a thing pass through it. requires a clock cycle to update value
-module DflipFlop2(dataIn, clk, dataOut, opCodeThingIn, opCodeThingOut);
-  input [31:0] dataIn;
-  input clk;
-  output [31:0] dataOut;
-  reg [31:0] dataOut;
-  input [5:0] opCodeThingIn;
-  output [5:0] opCodeThingOut;
-  reg [5:0] opCodeThingOut;
+//phase 2 pipeline latch(ID_EX)
+module pipeline_2_latch(clk, abusWire1, bbusWire1, DselectWire1, immWire1, SWire1, CinWire1,immBit1,abusWire2,bbusWire2,immWire2,SWire2,CinWire2,DselectWire2,immBit2);
+  input clk, CinWire1,immBit1;
+  input [31:0] abusWire1, bbusWire1, DselectWire1, immWire1;
+  input [2:0] SWire1;
+  output CinWire2,immBit2;
+  output [31:0] abusWire2, bbusWire2, DselectWire2, immWire2;
+  output [2:0] SWire2;
+  reg CinWire2,immBit2;
+  reg [31:0] abusWire2, bbusWire2, DselectWire2, immWire2;
+  reg [2:0] SWire2;
   always @(posedge clk) begin
-    dataOut = dataIn;
-    opCodeThingOut = opCodeThingIn;
+    abusWire2 = abusWire1;
+    bbusWire2 = bbusWire1;
+    DselectWire2 = DselectWire1;
+    immWire2 = immWire1;
+    SWire2 = SWire1;
+    CinWire2 = CinWire1;
+    immBit2 = immBit1;
   end
 endmodule
-
-module regalu(Aselect, Bselect, Dselect, clk, Cin, S, abus, bbus, dbus);
-    input [31:0] Aselect;
-    input [31:0] Bselect;
-    input [31:0] Dselect;
-    input clk;
-    output [31:0] abus;
-    output [31:0] bbus;
-    output [31:0] dbus;
-    input [2:0] S;
-    input Cin;
-    
-    regfile reggie(
-    .Aselect(Aselect),
-    .Bselect(Bselect),
-    .Dselect(Dselect),
-    .dbus(dbus),
-    .bbus(bbus),
-    .abus(abus),
-    .clk(clk)
-    );
-    alupipe alup(
-    .S(S),
-    .Cin(Cin),
-    .clk(clk),
-    .abus(abus),
-    .bbus(bbus),
-    .dbus(dbus)
-    );
-
+//phase 3 pipeliune latch(EX_MEM)
+module pipeline_3_latch(clk, dbusWire1, DselectWire2, dbusWire2, DselectWire3);
+  input clk;
+  input [31:0] dbusWire1, DselectWire2;
+  output [31:0] dbusWire2, DselectWire3;
+  reg [31:0] dbusWire2, DselectWire3;
+  always @(posedge clk) begin
+    dbusWire2 = dbusWire1;
+    DselectWire3 = DselectWire2;
+  end
 endmodule
-
 
 module regfile(
   input [31:0] Aselect,//select the register index to read from to store into abus
@@ -300,44 +251,18 @@ module DNegflipFlop(dbus, abus, Dselect, Bselect, Aselect, bbus, clk);
   reg [31:0] data;
   
   assign wireclk = clk & Dselect;
+  initial begin
+  data = 32'h00000000;
+  end
   
   always @(negedge wireclk) begin
-    data = dbus;    
+    if(Dselect) begin
+      data = dbus;
+    end
   end
-  assign abus = Aselect ? data : 32'bz;
-  assign bbus = Bselect ? data : 32'bz;
+  assign abus = Aselect? data : 32'hzzzzzzzz;
+  assign bbus = Bselect? data : 32'hzzzzzzzz;
 endmodule
-
-
-//the top module, the ALU with piped input and output
-module alupipe(S, abus, bbus, clk, Cin, dbus);
-  input [31:0] abus;
-  input [31:0] bbus;
-  input clk;
-  input [2:0] S;
-  input Cin;
-  output [31:0] dbus;
-  wire [31:0] aInput;//connects register A output to ALU A input
-  wire [31:0] bInput;//connects register B output to ALU B input
-  wire [31:0] dInput;//connects register D input to ALU D output
-  
-  alu32 ALU(.a(aInput), .b(bInput), .Cin(Cin), .d(dInput), .S(S));
-  DflipFlop AFF(.dataIn(abus), .dataOut(aInput), .clk(clk));
-  DflipFlop BFF(.dataIn(bbus), .dataOut(bInput), .clk(clk));
-  DflipFlop DFF(.dataIn(dInput), .dataOut(dbus), .clk(clk));
-  
-endmodule
-//flip flop module. requires a clock cycle to update value
-module DflipFlop(dataIn, clk, dataOut);
-  input [31:0] dataIn;
-  input clk;
-  output [31:0] dataOut;
-  reg [31:0] dataOut;
-  always @(posedge clk) begin
-    dataOut = dataIn;
-  end
-endmodule
-
 //Below this point is code from assignment 1//
 
 //The declaration of the entire ALU itself.
