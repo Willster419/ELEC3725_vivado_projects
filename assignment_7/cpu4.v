@@ -12,7 +12,6 @@ module cpu4(ibus,clk,daddrbus,databus);
   //the new bus things
   output [31:0] daddrbus;
   inout [31:0] databus;
-  reg [31:0] databusTemp;
   //decoder tings
   wire [5:0] opCode;//from IF_ID
   wire [5:0] funktion;//from IF_ID
@@ -38,8 +37,8 @@ module cpu4(ibus,clk,daddrbus,databus);
   wire [5:0] rd;//from ID_EX, to mux1
   wire [31:0] DselectWire2;//from ID_EX, to EX_MM
   wire [31:0] DselectWire3;//from EX_MEM, to MEM_WB
-  wire [31:0] DselectWire4;//from MEM_WB, to mux3
-  reg [31:0] DselectWire5;//from mux3, to regfile
+  wire [31:0] DselectWire3_5;//from MEM_WB, to mux3
+  wire [31:0] DselectWire4;//from mux3, to regfile
   //abus
   //output [31:0] abus;//from ID_EX, to SIM_OUT
   wire [31:0] abusWire1;//from regOut, to ID_EX
@@ -48,8 +47,8 @@ module cpu4(ibus,clk,daddrbus,databus);
   //output [31:0] bbus;//from mux2Out, to SIM_OUT
   wire [31:0] bbusWire1;//from regOut, to ID_EX
   wire [31:0] bbusWire2;//from ID_EX, to mux2/EX_MEM
-  wire [31:0] bbusWire2_5;//from EX_MEM, to bbusWire3
-  reg [31:0] bbusWire3;//from EX_MEM, to MEM_WB
+  wire [31:0] bbusWire3;//from EX_MEM, to memory logic
+  wire [31:0] bbusWire3_5;//from memory logic, to MEM_WB
   wire [31:0] bbusWire4;//from MEM_WB, to mux3
   //dbus
   //output [31:0] dbus;//from EX_MEM, to SIM_OUT
@@ -57,7 +56,7 @@ module cpu4(ibus,clk,daddrbus,databus);
   wire [31:0] dbusWire2;//from EM_MEM, to MEM_WB
   wire [31:0] dbusWire3;//from MEM_WB, to mux3
   //mux3
-  reg [31:0] mux3Out;//from dbusWire3/bbusWire4, to regfile
+  wire [31:0] mux3Out;//from dbusWire3/bbusWire4, to regfile
   //mux2
   wire [31:0] mux2Out;//from bbusWire2/immWire2, to ALU
   //immediate
@@ -75,9 +74,6 @@ module cpu4(ibus,clk,daddrbus,databus);
     CinWire1 = 1'bx;
     SWire1 = 3'bxxx;
     lwSwFlag1 = 2'bxx;
-    DselectWire5 = 32'b0;
-    mux3Out = 32'b0;
-    bbusWire3 = 32'bx;
   end
   //latch for pipeline 1(IF_ID)
   //module pipeline_1_latch(clk, ibus, ibusWire);
@@ -182,7 +178,7 @@ module cpu4(ibus,clk,daddrbus,databus);
   input clk
   );
   */
-  regfile Reggie3(.clk(clk),.Aselect(AselectWire),.Bselect(BselectWire),.Dselect(DselectWire3),.abus(abusWire1),.bbus(bbusWire1),.dbus(mux3Out));
+  regfile Reggie3(.clk(clk),.Aselect(AselectWire),.Bselect(BselectWire),.Dselect(DselectWire4),.abus(abusWire1),.bbus(bbusWire1),.dbus(mux3Out));
   //PIPELINE_1_END
   //latch for pipeline 2(ID_EX)
   //module pipeline_2_latch(clk, abusWire1, bbusWire1, DselectWire1, immWire1, SWire1, CinWire1,immBit1,lwSwFlag1,abusWire2,bbusWire2,immWire2,SWire2,CinWire2,DselectWire2,immBit2,lwSwFlag2);
@@ -201,50 +197,51 @@ module cpu4(ibus,clk,daddrbus,databus);
   //PIPELINE_2_END
   //latch for pipeline 3(EX_MEM)
   //module pipeline_3_latch(clk, dbusWire1, DselectWire2, bbusWire2, lwSwFlag2, dbusWire2, DselectWire3,bbusWire3,lwSwFlag3);
-  pipeline_3_latch EX_MEME (.clk(clk),.dbusWire1(dbusWire1),.DselectWire2(DselectWire2),.bbusWire2(bbusWire2),.lwSwFlag2(lwSwFlag2),.dbusWire2(dbusWire2),.DselectWire3(DselectWire3),.bbusWire3(bbusWire2_5),.lwSwFlag3(lwSwFlag3));
+  pipeline_3_latch EX_MEME (.clk(clk),.dbusWire1(dbusWire1),.DselectWire2(DselectWire2),.bbusWire2(bbusWire2),.lwSwFlag2(lwSwFlag2),.dbusWire2(dbusWire2),.DselectWire3(DselectWire3),.bbusWire3(bbusWire3),.lwSwFlag3(lwSwFlag3));
   //PIPELINE_3_SRART
-  //assign out dbus
-  //assign dbus = dbusWire2;
   //assign output values
-  always @(lwSwFlag3,dbusWire2,DselectWire3) begin
-    bbusWire3 = bbusWire2_5;
-    case(lwSwFlag3)
-      2'b00:begin//none, 
-        databusTemp = 32'hzzzzzzzz;
-      end
-      2'b01:begin//LOAD, 
-        bbusWire3 = databus;
-        databusTemp = 32'hzzzzzzzz;
-      end
-      2'b10:begin//SAVE/STORE, 
-        databusTemp = bbusWire3;
-      end
-    endcase
-  end
-  assign databus = databusTemp;
+  //try again with ternary operators
+  //one for the databus and one for bbusWire3
+  assign bbusWire3_5 = (lwSwFlag3==2'b01)? databus: bbusWire3;
+  assign databus = (lwSwFlag3 == 2'b10)? bbusWire3: 32'hzzzzzzzz;
+  /*
+  case(lwSwFlag3)
+    2'b00:begin//none, 
+      assign databus = 32'hzzzzzzzz;
+    end
+    2'b01:begin//LOAD, 
+      assign bbusWire3 = databus;
+      assign databus = 32'hzzzzzzzz;
+    end
+    2'b10:begin//SAVE/STORE, 
+      assign databus = bbusWire3;
+    end
+  endcase
+  */
   assign daddrbus = dbusWire2;
   //PIPELINE_3_END
   //latch for pipeline 4(MEM_WB)
   //module pipeline_4_latch(clk, dbusWire2, DselectWire3, bbusWire3, lwSwFlag3, dbusWire3, DselectWire4,bbusWire4,lwSwFlag4);
-  pipeline_4_latch MEM_WB (.clk(clk),.dbusWire2(dbusWire2),.DselectWire3(DselectWire3),.bbusWire3(bbusWire3),.lwSwFlag3(lwSwFlag3),.dbusWire3(dbusWire3),.DselectWire4(DselectWire4),.bbusWire4(bbusWire4),.lwSwFlag4(lwSwFlag4));
+  pipeline_4_latch MEM_WB (.clk(clk),.dbusWire2(dbusWire2),.DselectWire3(DselectWire3),.bbusWire3(bbusWire3_5),.lwSwFlag3(lwSwFlag3),.dbusWire3(dbusWire3),.DselectWire4(DselectWire3_5),.bbusWire4(bbusWire4),.lwSwFlag4(lwSwFlag4));
   //PIPELINE_4_START
   //the "mux" for the data writeBack
-  always @(DselectWire4,bbusWire4,lwSwFlag4,dbusWire3) begin
-    DselectWire5 = DselectWire4;
-    case(lwSwFlag4)
-      2'b00:begin//none, use dbus
-        mux3Out = dbusWire3;
-      end
-      2'b01:begin//LOAD, use bbus
-        mux3Out = bbusWire4;
-      end
-      2'b10:begin//STORE, use dbus
-        mux3Out = dbusWire3;
-        //set send mux3out to R0
-        DselectWire5 = 32'h00000001;
-      end
-    endcase
-  end
+  assign mux3Out = (lwSwFlag4 == 2'b01)? bbusWire4:dbusWire3;
+  assign DselectWire4 = (lwSwFlag4 == 2'b10)? 32'h00000001: DselectWire3_5;
+  /*
+  case(lwSwFlag4)
+    2'b00:begin//none, use dbus
+      assign mux3Out = dbusWire3;
+    end
+    2'b01:begin//LOAD, use bbus
+      assign mux3Out = bbusWire4;
+    end
+    2'b10:begin//STORE, use dbus
+      assign mux3Out = dbusWire3;
+      //set send mux3out to R0
+      assign DselectWire4 = 32'h00000001;
+    end
+  endcase
+  */
   //PIPELINE_4_END
 endmodule
 //phase 1 pipeline latch(IF_ID)
