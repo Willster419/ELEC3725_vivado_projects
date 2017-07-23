@@ -58,11 +58,11 @@ module alu_cell (d, g, p, a, b, c, S);
   reg g,p,d,cint,bint;
   
   always @(a,b,c,S,p,g) begin 
-    bint = S[0] ^ b;
-    g = a & bint;
-    p = a ^ bint;
-    cint = S[1] & c;
-   
+    bint = S[0] ^ b;//acts as an inversion for the xnor so it can be processed as xor
+    g = a & bint;//used for overflow, uses xor and a value from a. covers case of last bit being high
+    p = a ^ bint;//xor, for xor and xnor
+    cint = S[1] & c;//for add or sub, already processed by the lacs
+    //if it's supposed to be a 1, it will be a 1 if the command is add or subtract
   if(S[2]==0)
     begin
       d = p ^ cint;
@@ -71,13 +71,13 @@ module alu_cell (d, g, p, a, b, c, S);
   else if(S[2]==1)
     begin
       if((S[1]==0) & (S[0]==0)) begin
-        d = a | b;
+        d = a | b;//or
       end
       else if ((S[1]==0) & (S[0]==1)) begin
-        d = ~(a|b);
+        d = ~(a|b);//nor
       end
       else if ((S[1]==1) & (S[0]==0)) begin
-        d = a&b;
+        d = a&b;//and
       end
       else
         d = 1;
