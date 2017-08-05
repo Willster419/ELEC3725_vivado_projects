@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="ARMStb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="ARMStb" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="999994100fs"></ZoomStartTime>
+      <ZoomEndTime time="1000001181fs"></ZoomEndTime>
+      <Cursor1Time time="1000000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="175"></NameColumnWidth>
+      <ValueColumnWidth column_width="132"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="35" />
+   <wvobject fp_name="/ARMStb/instrbus" type="array">
+      <obj_property name="ElementShortName">instrbus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">instrbus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/instrbusin" type="array">
+      <obj_property name="ElementShortName">instrbusin[0:35][31:0]</obj_property>
+      <obj_property name="ObjectShortName">instrbusin[0:35][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/iaddrbus" type="array">
+      <obj_property name="ElementShortName">iaddrbus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">iaddrbus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/daddrbus" type="array">
+      <obj_property name="ElementShortName">daddrbus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">daddrbus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/iaddrbusout" type="array">
+      <obj_property name="ElementShortName">iaddrbusout[0:35][31:0]</obj_property>
+      <obj_property name="ObjectShortName">iaddrbusout[0:35][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/daddrbusout" type="array">
+      <obj_property name="ElementShortName">daddrbusout[0:35][31:0]</obj_property>
+      <obj_property name="ObjectShortName">daddrbusout[0:35][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/databus" type="array">
+      <obj_property name="ElementShortName">databus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">databus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/databusk" type="array">
+      <obj_property name="ElementShortName">databusk[31:0]</obj_property>
+      <obj_property name="ObjectShortName">databusk[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/databusin" type="array">
+      <obj_property name="ElementShortName">databusin[0:35][31:0]</obj_property>
+      <obj_property name="ObjectShortName">databusin[0:35][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/databusout" type="array">
+      <obj_property name="ElementShortName">databusout[0:35][31:0]</obj_property>
+      <obj_property name="ObjectShortName">databusout[0:35][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/reset" type="logic">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/clkd" type="logic">
+      <obj_property name="ElementShortName">clkd</obj_property>
+      <obj_property name="ObjectShortName">clkd</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dontcare" type="array">
+      <obj_property name="ElementShortName">dontcare[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dontcare[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/iname" type="array">
+      <obj_property name="ElementShortName">iname[0:35][192:1]</obj_property>
+      <obj_property name="ObjectShortName">iname[0:35][192:1]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/error" type="array">
+      <obj_property name="ElementShortName">error[31:0]</obj_property>
+      <obj_property name="ObjectShortName">error[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/k" type="array">
+      <obj_property name="ElementShortName">k[31:0]</obj_property>
+      <obj_property name="ObjectShortName">k[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/ntests" type="array">
+      <obj_property name="ElementShortName">ntests[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ntests[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/Rformat" type="array">
+      <obj_property name="ElementShortName">Rformat[5:0]</obj_property>
+      <obj_property name="ObjectShortName">Rformat[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/ADDI" type="array">
+      <obj_property name="ElementShortName">ADDI[5:0]</obj_property>
+      <obj_property name="ObjectShortName">ADDI[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/SUBI" type="array">
+      <obj_property name="ElementShortName">SUBI[5:0]</obj_property>
+      <obj_property name="ObjectShortName">SUBI[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/XORI" type="array">
+      <obj_property name="ElementShortName">XORI[5:0]</obj_property>
+      <obj_property name="ObjectShortName">XORI[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/ANDI" type="array">
+      <obj_property name="ElementShortName">ANDI[5:0]</obj_property>
+      <obj_property name="ObjectShortName">ANDI[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/ORI" type="array">
+      <obj_property name="ElementShortName">ORI[5:0]</obj_property>
+      <obj_property name="ObjectShortName">ORI[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/LW" type="array">
+      <obj_property name="ElementShortName">LW[5:0]</obj_property>
+      <obj_property name="ObjectShortName">LW[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/SW" type="array">
+      <obj_property name="ElementShortName">SW[5:0]</obj_property>
+      <obj_property name="ObjectShortName">SW[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/BEQ" type="array">
+      <obj_property name="ElementShortName">BEQ[5:0]</obj_property>
+      <obj_property name="ObjectShortName">BEQ[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/BNE" type="array">
+      <obj_property name="ElementShortName">BNE[5:0]</obj_property>
+      <obj_property name="ObjectShortName">BNE[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/ADD" type="array">
+      <obj_property name="ElementShortName">ADD[5:0]</obj_property>
+      <obj_property name="ObjectShortName">ADD[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/SUB" type="array">
+      <obj_property name="ElementShortName">SUB[5:0]</obj_property>
+      <obj_property name="ObjectShortName">SUB[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/XOR" type="array">
+      <obj_property name="ElementShortName">XOR[5:0]</obj_property>
+      <obj_property name="ObjectShortName">XOR[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/AND" type="array">
+      <obj_property name="ElementShortName">AND[5:0]</obj_property>
+      <obj_property name="ObjectShortName">AND[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/OR" type="array">
+      <obj_property name="ElementShortName">OR[5:0]</obj_property>
+      <obj_property name="ObjectShortName">OR[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/SLT" type="array">
+      <obj_property name="ElementShortName">SLT[5:0]</obj_property>
+      <obj_property name="ObjectShortName">SLT[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/SLE" type="array">
+      <obj_property name="ElementShortName">SLE[5:0]</obj_property>
+      <obj_property name="ObjectShortName">SLE[5:0]</obj_property>
+   </wvobject>
+</wave_config>
