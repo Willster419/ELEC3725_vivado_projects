@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="cpu5_testbench_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="cpu5_testbench" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="304044000fs"></ZoomStartTime>
+      <ZoomEndTime time="357994001fs"></ZoomEndTime>
+      <Cursor1Time time="345000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="175"></NameColumnWidth>
+      <ValueColumnWidth column_width="132"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="30" />
+   <wvobject fp_name="/cpu5_testbench/instrbus" type="array">
+      <obj_property name="ElementShortName">instrbus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">instrbus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/instrbusin" type="array">
+      <obj_property name="ElementShortName">instrbusin[0:35][31:0]</obj_property>
+      <obj_property name="ObjectShortName">instrbusin[0:35][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/iaddrbus" type="array">
+      <obj_property name="ElementShortName">iaddrbus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">iaddrbus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/daddrbus" type="array">
+      <obj_property name="ElementShortName">daddrbus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">daddrbus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/iaddrbusout" type="array">
+      <obj_property name="ElementShortName">iaddrbusout[0:35][31:0]</obj_property>
+      <obj_property name="ObjectShortName">iaddrbusout[0:35][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/daddrbusout" type="array">
+      <obj_property name="ElementShortName">daddrbusout[0:35][31:0]</obj_property>
+      <obj_property name="ObjectShortName">daddrbusout[0:35][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/databus" type="array">
+      <obj_property name="ElementShortName">databus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">databus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/databusk" type="array">
+      <obj_property name="ElementShortName">databusk[31:0]</obj_property>
+      <obj_property name="ObjectShortName">databusk[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/databusin" type="array">
+      <obj_property name="ElementShortName">databusin[0:35][31:0]</obj_property>
+      <obj_property name="ObjectShortName">databusin[0:35][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/databusout" type="array">
+      <obj_property name="ElementShortName">databusout[0:35][31:0]</obj_property>
+      <obj_property name="ObjectShortName">databusout[0:35][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/dut/ZBit" type="logic">
+      <obj_property name="ElementShortName">ZBit</obj_property>
+      <obj_property name="ObjectShortName">ZBit</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/dut/potentialSLEBit" type="array">
+      <obj_property name="ElementShortName">potentialSLEBit[31:0]</obj_property>
+      <obj_property name="ObjectShortName">potentialSLEBit[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/dut/potentialSLTBit" type="array">
+      <obj_property name="ElementShortName">potentialSLTBit[31:0]</obj_property>
+      <obj_property name="ObjectShortName">potentialSLTBit[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/dut/actualSLBit" type="array">
+      <obj_property name="ElementShortName">actualSLBit[31:0]</obj_property>
+      <obj_property name="ObjectShortName">actualSLBit[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/dut/dbusWire1_5" type="array">
+      <obj_property name="ElementShortName">dbusWire1_5[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dbusWire1_5[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/dut/setControlBitsWire1" type="array">
+      <obj_property name="ElementShortName">setControlBitsWire1[1:0]</obj_property>
+      <obj_property name="ObjectShortName">setControlBitsWire1[1:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/reset" type="logic">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/clkd" type="logic">
+      <obj_property name="ElementShortName">clkd</obj_property>
+      <obj_property name="ObjectShortName">clkd</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/error" type="array">
+      <obj_property name="ElementShortName">error[31:0]</obj_property>
+      <obj_property name="ObjectShortName">error[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/dut/mux4Controller" type="logic">
+      <obj_property name="ElementShortName">mux4Controller</obj_property>
+      <obj_property name="ObjectShortName">mux4Controller</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/dut/branchCalcWire2" type="array">
+      <obj_property name="ElementShortName">branchCalcWire2[31:0]</obj_property>
+      <obj_property name="ObjectShortName">branchCalcWire2[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/dut/iaddrbusWire2" type="array">
+      <obj_property name="ElementShortName">iaddrbusWire2[31:0]</obj_property>
+      <obj_property name="ObjectShortName">iaddrbusWire2[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/dut/iaddrbusWire1" type="array">
+      <obj_property name="ElementShortName">iaddrbusWire1[31:0]</obj_property>
+      <obj_property name="ObjectShortName">iaddrbusWire1[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/dut/iaddrbus" type="array">
+      <obj_property name="ElementShortName">iaddrbus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">iaddrbus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/iaddrbus" type="array">
+      <obj_property name="ElementShortName">iaddrbus[31:0]</obj_property>
+      <obj_property name="ObjectShortName">iaddrbus[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/dut/branchControlBit" type="array">
+      <obj_property name="ElementShortName">branchControlBit[1:0]</obj_property>
+      <obj_property name="ObjectShortName">branchControlBit[1:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/dut/abusWire1" type="array">
+      <obj_property name="ElementShortName">abusWire1[31:0]</obj_property>
+      <obj_property name="ObjectShortName">abusWire1[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/dut/bbusWire1" type="array">
+      <obj_property name="ElementShortName">bbusWire1[31:0]</obj_property>
+      <obj_property name="ObjectShortName">bbusWire1[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cpu5_testbench/dut/ibusWire" type="array">
+      <obj_property name="ElementShortName">ibusWire[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ibusWire[31:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+</wave_config>

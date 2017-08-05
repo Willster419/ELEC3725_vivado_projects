@@ -1,6 +1,6 @@
 /************************
 *  Willard Wider
-*  07-06-17
+*  07-23-17
 *  ELEC3725
 *  cpu5.v
 *  building a 32 bit CPU
@@ -9,15 +9,38 @@
 module cpu5(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //just a clock
   input clk;
-  //reset i guess
+  //reset to clear the counter
   input reset;
   //instruction bus
   output [31:0] iaddrbus;//from PC, to SIM_OUT
-  reg [31:0] iaddrbusWire1;//from mux, to PC
-  wire [31:0] iaddrbusWire2;//from PC, to null
-  reg [31:0] iaddrbusWire3;//from null, to mux/IF_ID (for branch calculation?)
+  wire [31:0] iaddrbusWire1;//from mux, to PC
+  wire [31:0] iaddrbusWire2;//from PC, to ?
+  wire [31:0] iaddrbusWire4;//from PC, to IF_ID
+  //SLT SLE control bits
+  //00 = nothing, 01 = SLT, 10 = SLE
+  reg [1:0] setControlBits;
+  wire [1:0] setControlBitsWire1;
+  wire [1:0] setControlBitsWire2;
+  //for SLT/SLE operations
+  wire ZBit;//high when rs(a) - rt(b) = 0, 1 otherwise
+  wire [31:0] potentialSLEBit;//the value to set to dbus if it is a SLE operation
+  wire [31:0] potentialSLTBit;
+  wire [31:0] actualSLBit;
+  //the cout(finally) for the alu
+  wire ALUCoutWire;
+  //BEQ and BNE congtrol bits
   //reg to set wether to "kill" the instruction in the pipeline
-  reg branchBit;
+  //00 = noting, 01 = BEQ, 10 = BNE
+  reg [1:0] branchControlBit;
+  wire [1:0] branchControlBitWire1;
+  wire [1:0] branchControlBitWire2;
+  wire [1:0] branchControlBitWire3;
+  //program counter wires to be piped into the IF_ID stage
+  wire [31:0] PCWire1;//form IF_ID, to branchCalcWire1
+  //the wire for the branch calculation, part 1 (immediate sign extended, bit shifted by 2 for *4)
+  wire [31:0] branchCalcWire1;//from immediate, to branchCalcwire2
+  //the wire for the branch calculation, part 2 (+4)
+  wire [31:0] branchCalcWire2;//from branchCalcWire1, to mux4
   //the new bus things
   output [31:0] daddrbus;//from EX_MEM, to SIM_OUT
   inout [31:0] databus;//from SIM_IN/EX_MEM, to SIM_OUT/MEM_WB
@@ -61,13 +84,16 @@ module cpu5(ibus,clk,daddrbus,databus,reset,iaddrbus);
   wire [31:0] bbusWire4;//from MEM_WB, to mux3
   //dbus
   //output [31:0] dbus;//from EX_MEM, to SIM_OUT
-  wire [31:0] dbusWire1;//from ALU, to EX_MEM
+  wire [31:0] dbusWire1;//from ALU, to dbusWire1_5(SLE_MUX_TEST)
+  wire [31:0] dbusWire1_5;//from SLE_MUX_TEST to EX_MEM
   wire [31:0] dbusWire2;//from EM_MEM, to MEM_WB
   wire [31:0] dbusWire3;//from MEM_WB, to mux3
   //mux3
   wire [31:0] mux3Out;//from dbusWire3/bbusWire4, to regfile
   //mux2
   wire [31:0] mux2Out;//from bbusWire2/immWire2, to ALU
+  //mux4 deciding wire
+  wire mux4Controller;//controls the pc address bus
   //immediate
   wire [31:0] immWire1;//from IF_ID, to ID_EX
   wire [31:0] immWire2;//from ID_EX, to mux2
@@ -83,21 +109,22 @@ module cpu5(ibus,clk,daddrbus,databus,reset,iaddrbus);
     CinWire1 = 1'bx;
     SWire1 = 3'bxxx;
     lwSwFlag1 = 2'bxx;
-    branchBit = 1'b0;
-    iaddrbusWire1 = 32'b0;
-    iaddrbusWire3 = 32'b0;
+    branchControlBit = 2'b0;
+    setControlBits = 2'b00;
   end
   //latch for pipeline 0(PC)
   //module pipeline_0_latch(clk, iaddrbusWire1, iaddrbusOut);
-  pipeline_0_latch PC(.clk(clk),.iaddrbusWire1(iaddrbusWire1),.iaddrbusOut(iaddrbusWire2));
-  //PIPELINE_0_START
-  always@(iaddrbusWire2) begin
-    iaddrbusWire3 = iaddrbusWire2 + 4;
-  end
+  pipeline_0_latch PC(.clk(clk),.iaddrbusWire1(iaddrbusWire1),.iaddrbusOut(iaddrbusWire2),.reset(reset));
+  //assign the output
+  assign iaddrbus = mux4Controller? branchCalcWire2 : iaddrbusWire2;
+  //iaddrbusWire4 gets feed into the IF_ID stage
+  assign iaddrbusWire4 = iaddrbusWire2;
+  //feed the pc back into itself. may update iaddrbusWire2 from the IF_ID stage
+  assign iaddrbusWire1 = mux4Controller? branchCalcWire2 : iaddrbusWire2;
   //PIPELINE_0_END
   //latch for pipeline 1(IF_ID)
   //module pipeline_1_latch(clk, ibus, ibusWire);
-  pipeline_1_latch IF_ID(.clk(clk),.ibus(ibus),.ibusWire(ibusWire));
+  pipeline_1_latch IF_ID(.clk(clk),.ibus(ibus),.ibusWire(ibusWire),.PCIn(iaddrbusWire4),.PCOut(PCWire1));
   //PIPELINE_1_START
   //decode the input command
   assign opCode = ibusWire[31:26];
@@ -111,7 +138,8 @@ module cpu5(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //first mux value is to assume 0
   immBit1 = 1;
   CinWire1 = 0;
-  branchBit = 0;
+  branchControlBit = 0;
+  setControlBits = 0;
   //assume not doing anything with the load or save
   lwSwFlag1 = 2'b00;
   //write the cases for the opcode (immediate)
@@ -149,13 +177,17 @@ module cpu5(ibus,clk,daddrbus,databus,reset,iaddrbus);
     end
     6'b110000: begin
       //BEQ
-      SWire1 = 3'b010;//how to kill the branch?
-      branchBit = 1'b1;
+      //need this?
+      SWire1 = 3'b010;//yes, yes i do
+      //set control bit
+      branchControlBit = 2'b01;
     end
     6'b110001: begin
       //BNE
-      SWire1 = 3'b010;//how ot kill the branch?
-      branchBit = 1'b1;
+      //need this?
+      SWire1 = 3'b010;//yes, yes i do
+      //set control bit
+      branchControlBit = 2'b10;
     end
     //if 00000
     6'b000000: begin
@@ -184,6 +216,20 @@ module cpu5(ibus,clk,daddrbus,databus,reset,iaddrbus);
           //or
           SWire1 = 3'b100;
         end
+        6'b110110: begin
+          //SLT
+          //00 = nothing, 01 = SLT, 10 = SLE
+          setControlBits = 2'b01;
+          //set to subtraction
+          SWire1 = 3'b011;
+        end
+        6'b110111: begin
+          //SLE
+          //00 = nothing, 01 = SLT, 10 = SLE
+          setControlBits = 2'b10;
+          //set to subtraction
+          SWire1 = 3'b011;
+        end
       endcase
     end
   endcase
@@ -198,40 +244,21 @@ module cpu5(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //Rd for R, imm = false
   //Rt for I, imm = true
   assign DselectWire1 = immBit1? 1<<rt : 1<<rd;
-  /*
-  module regfile(
-  input [31:0] Aselect,//select the register index to read from to store into abus
-  input [31:0] Bselect,//select the register index to read from to store into bbus
-  input [31:0] Dselect,//select the register to write to from dbus
-  input [31:0] dbus,//data in
-  output [31:0] abus,//data out
-  output [31:0] bbus,//data out
-  input clk
-  );
-  */
   regfile Reggie3(.clk(clk),.Aselect(AselectWire),.Bselect(BselectWire),.Dselect(DselectWire4),.abus(abusWire1),.bbus(bbusWire1),.dbus(mux3Out));
-  //do the logic for the branch mux at the neg clock edge when we get the regfile info back
-  always@(bbusWire1,abusWire1) begin
-    iaddrbusWire1 = iaddrbusWire3;
-    case(opCode)
-      6'b110000: begin
-        //BEQ
-        if(bbusWire1==abusWire1) begin
-          iaddrbusWire1 = 31'b0;//CALCULATE BRANCH
-        end
-      end
-      6'b110001: begin
-        //BNE
-        if(bbusWire1!=abusWire1) begin
-          iaddrbusWire1 = 32'b0;//CALCULATE BRANCH
-        end
-      end
-    endcase
-  end
+  //update the muxWire4 controll if the instruction is BEQ or BNE, and if it is actually equal
+  //mux4Controller = 1 if ((BEQ and abus == bbus) or (BNE and bbus != abus)), 0 otherwise
+  //00 = noting, 01 = BEQ, 10 = BNE
+  //reg [1:0] branchControlBit;
+  assign mux4Controller = ((!clk) && ((branchControlBit==2'b01) && (abusWire1 == bbusWire1)) || ((branchControlBit==2'b10) && (abusWire1!=bbusWire1)))? 1: 0;
+  //the branch calculation
+  assign branchCalcWire1 = immWire1 << 2;
+  assign branchCalcWire2 = branchCalcWire1 + PCWire1;
   //PIPELINE_1_END
   //latch for pipeline 2(ID_EX)
-  //module pipeline_2_latch(clk, abusWire1, bbusWire1, DselectWire1, immWire1, SWire1, CinWire1,immBit1,lwSwFlag1,abusWire2,bbusWire2,immWire2,SWire2,CinWire2,DselectWire2,immBit2,lwSwFlag2);
-  pipeline_2_latch ED_EX(.clk(clk),.abusWire1(abusWire1),.bbusWire1(bbusWire1),.DselectWire1(DselectWire1),.immWire1(immWire1),.SWire1(SWire1),.CinWire1(CinWire1),.immBit1(immBit1),.lwSwFlag1(lwSwFlag1),.abusWire2(abusWire2),.bbusWire2(bbusWire2),.immWire2(immWire2),.CinWire2(CinWire2),.DselectWire2(DselectWire2),.immBit2(immBit2),.SWire2,.lwSwFlag2(lwSwFlag2));
+  pipeline_2_latch ED_EX(.clk(clk),.abusWire1(abusWire1),.bbusWire1(bbusWire1),.DselectWire1(DselectWire1),.immWire1(immWire1),.SWire1(SWire1),
+  .CinWire1(CinWire1),.immBit1(immBit1),.lwSwFlag1(lwSwFlag1),.abusWire2(abusWire2),.bbusWire2(bbusWire2),.immWire2(immWire2),.CinWire2(CinWire2),
+  .DselectWire2(DselectWire2),.immBit2(immBit2),.SWire2,.lwSwFlag2(lwSwFlag2),.setControlBits(setControlBits),.setControlBitsWire1(setControlBitsWire1),
+  .branchControlBit(branchControlBit),.branchControlBitWire1(branchControlBitWire1));
   //PIPELINE_2_START
   //assign abus output
   //assign abus = abusWire2;
@@ -242,91 +269,96 @@ module cpu5(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //assign bbus = mux2Out;
   //make the ALU
   //module alu32 (d, Cout, V, a, b, Cin, S);
-  alu32 literallyLogic(.d(dbusWire1),.a(abusWire2),.b(mux2Out),.Cin(CinWire2),.S(SWire2));
+  alu32 literallyLogic(.d(dbusWire1),.a(abusWire2),.b(mux2Out),.Cin(CinWire2),.S(SWire2),.Cout(ALUCoutWire));
+  //wipe the dbus if it's an SLT or an SLE
+  //zero result flag
+  assign ZBit = (dbusWire1==0)? 1:0;
+  //potential values for if the instruction is for SLT or SLE
+  assign potentialSLTBit = (!ALUCoutWire && !ZBit)? 32'h00000001:32'h00000000;
+  assign potentialSLEBit = (!ALUCoutWire || ZBit)? 32'h00000001:32'h00000000;
+  //a determinate wire that uses SLT or SLE, assuming if not one, than the other
+  //(a wire later decides if that always "lateer" choosen one is actually used
+  //00 = nothing, 01 = SLT, 10 = SLE
+  assign actualSLBit = (setControlBitsWire1 == 2'b01)? potentialSLTBit: potentialSLEBit;
+  //the wire that is used for the new dbusWire, adds a check for if the result needs to be the SLT or not
+  //SLE_MUX_TEST
+  assign dbusWire1_5 = (setControlBitsWire1 > 2'b00)? actualSLBit:dbusWire1;
   //PIPELINE_2_END
   //latch for pipeline 3(EX_MEM)
-  //module pipeline_3_latch(clk, dbusWire1, DselectWire2, bbusWire2, lwSwFlag2, dbusWire2, DselectWire3,bbusWire3,lwSwFlag3);
-  pipeline_3_latch EX_MEME (.clk(clk),.dbusWire1(dbusWire1),.DselectWire2(DselectWire2),.bbusWire2(bbusWire2),.lwSwFlag2(lwSwFlag2),.dbusWire2(dbusWire2),.DselectWire3(DselectWire3),.bbusWire3(bbusWire3),.lwSwFlag3(lwSwFlag3));
+  pipeline_3_latch EX_MEME (.clk(clk),.dbusWire1(dbusWire1_5),.DselectWire2(DselectWire2),.bbusWire2(bbusWire2),.lwSwFlag2(lwSwFlag2),.dbusWire2(dbusWire2),
+  .DselectWire3(DselectWire3),.bbusWire3(bbusWire3),.lwSwFlag3(lwSwFlag3),.branchControlBitWire1(branchControlBitWire1),.branchControlBitWire2(branchControlBitWire2));
   //PIPELINE_3_SRART
   //assign output values
   //try again with ternary operators
   //one for the databus and one for bbusWire3
   assign bbusWire3_5 = (lwSwFlag3==2'b01)? databus: bbusWire3;
   assign databus = (lwSwFlag3 == 2'b10)? bbusWire3: 32'hzzzzzzzz;
-  /*
-  case(lwSwFlag3)
-    2'b00:begin//none, 
-      assign databus = 32'hzzzzzzzz;
-    end
-    2'b01:begin//LOAD, 
-      assign bbusWire3 = databus;
-      assign databus = 32'hzzzzzzzz;
-    end
-    2'b10:begin//SAVE/STORE, 
-      assign databus = bbusWire3;
-    end
-  endcase
-  */
   assign daddrbus = dbusWire2;
   //PIPELINE_3_END
   //latch for pipeline 4(MEM_WB)
-  //module pipeline_4_latch(clk, dbusWire2, DselectWire3, bbusWire3, lwSwFlag3, dbusWire3, DselectWire4,bbusWire4,lwSwFlag4);
-  pipeline_4_latch MEM_WB (.clk(clk),.dbusWire2(dbusWire2),.DselectWire3(DselectWire3),.bbusWire3(bbusWire3_5),.lwSwFlag3(lwSwFlag3),.dbusWire3(dbusWire3),.DselectWire4(DselectWire3_5),.bbusWire4(bbusWire4),.lwSwFlag4(lwSwFlag4));
+  pipeline_4_latch MEM_WB (.clk(clk),.dbusWire2(dbusWire2),.DselectWire3(DselectWire3),.bbusWire3(bbusWire3_5),.lwSwFlag3(lwSwFlag3),.dbusWire3(dbusWire3),.DselectWire4(DselectWire3_5),
+  .bbusWire4(bbusWire4),.lwSwFlag4(lwSwFlag4),.branchControlBitWire2(branchControlBitWire2),.branchControlBitWire3(branchControlBitWire3));
   //PIPELINE_4_START
   //the "mux" for the data writeBack
   assign mux3Out = (lwSwFlag4 == 2'b01)? bbusWire4:dbusWire3;
-  assign DselectWire4 = (lwSwFlag4 == 2'b10)? 32'h00000001: DselectWire3_5;
-  /*
-  case(lwSwFlag4)
-    2'b00:begin//none, use dbus
-      assign mux3Out = dbusWire3;
-    end
-    2'b01:begin//LOAD, use bbus
-      assign mux3Out = bbusWire4;
-    end
-    2'b10:begin//STORE, use dbus
-      assign mux3Out = dbusWire3;
-      //set send mux3out to R0
-      assign DselectWire4 = 32'h00000001;
-    end
-  endcase
-  */
+  //disable the writeback if it's a store word OR if it's a beq branch
+  assign DselectWire4 = ((lwSwFlag4 == 2'b10) ||(branchControlBitWire3 > 2'b00))? 32'h00000001: DselectWire3_5;
   //PIPELINE_4_END
 endmodule
 //phase 0 pipeline latch (PC)
-module pipeline_0_latch(clk, iaddrbusWire1, iaddrbusOut);
-  input clk;
+module pipeline_0_latch(clk, iaddrbusWire1, iaddrbusOut, reset);
+  input clk, reset;
   input [31:0] iaddrbusWire1;
   output [31:0] iaddrbusOut;
   reg [31:0] iaddrbusOut;
+  reg startBit;
+  initial begin
+  startBit = 1;
+  end
   always@(posedge clk) begin
-    iaddrbusOut = iaddrbusWire1;
+    //if reset is high, reset the counter
+    //iaddrbusOut = iaddrbusWire1+4;
+    iaddrbusOut = (reset|startBit)? 0:iaddrbusWire1+4;
+    startBit = 0;
   end
 endmodule
 //phase 1 pipeline latch(IF_ID)
-module pipeline_1_latch(clk, ibus, ibusWire);
-  input [31:0] ibus;
+module pipeline_1_latch(clk, ibus, ibusWire, PCIn, PCOut);
+  input [31:0] ibus, PCIn;
   input clk;
-  output [31:0] ibusWire;
-  reg [31:0] ibusWire;
+  output [31:0] ibusWire, PCOut;
+  reg [31:0] ibusWire, PCOut;
   always @(posedge clk) begin
+    //if terminator bit is high from previous instruction (with BEQ/BNE)
+    //we don't care about this instruction, kill it
+    //which is actually setting it to 
     ibusWire = ibus;
+    //EDIT: this is delayed branching, other instructions can be put in place (terminator is not a thing)
+    PCOut = PCIn;
   end
 endmodule
 //phase 2 pipeline latch(ID_EX)
-module pipeline_2_latch(clk, abusWire1, bbusWire1, DselectWire1, immWire1, SWire1, CinWire1,immBit1,lwSwFlag1,abusWire2,bbusWire2,immWire2,SWire2,CinWire2,DselectWire2,immBit2,lwSwFlag2);
+module pipeline_2_latch(clk, abusWire1, bbusWire1, DselectWire1, immWire1, SWire1, CinWire1,immBit1,lwSwFlag1,
+abusWire2,bbusWire2,immWire2,SWire2,CinWire2,DselectWire2,immBit2,lwSwFlag2,setControlBits,setControlBitsWire1,
+branchControlBit,branchControlBitWire1);
   input clk, CinWire1,immBit1;
   input [31:0] abusWire1, bbusWire1, DselectWire1, immWire1;
   input [2:0] SWire1;
   input [1:0] lwSwFlag1;
+  input [1:0] setControlBits;
+  input [1:0] branchControlBit;
   output CinWire2,immBit2;
   output [31:0] abusWire2, bbusWire2, DselectWire2, immWire2;
   output [2:0] SWire2;
   output [1:0] lwSwFlag2;
+  output [1:0] setControlBitsWire1;
+  output [1:0] branchControlBitWire1;
   reg CinWire2,immBit2;
   reg [31:0] abusWire2, bbusWire2, DselectWire2, immWire2;
   reg [2:0] SWire2;
   reg [1:0] lwSwFlag2;
+  reg [1:0] setControlBitsWire1;
+  reg [1:0] branchControlBitWire1;
   always @(posedge clk) begin
     abusWire2 = abusWire1;
     bbusWire2 = bbusWire1;
@@ -336,38 +368,48 @@ module pipeline_2_latch(clk, abusWire1, bbusWire1, DselectWire1, immWire1, SWire
     CinWire2 = CinWire1;
     immBit2 = immBit1;
     lwSwFlag2 = lwSwFlag1;
+    setControlBitsWire1 = setControlBits;
+    branchControlBitWire1 = branchControlBit;
   end
 endmodule
 //phase 3 pipeliune latch(EX_MEM)
-module pipeline_3_latch(clk, dbusWire1, DselectWire2, bbusWire2, lwSwFlag2, dbusWire2, DselectWire3,bbusWire3,lwSwFlag3);
+module pipeline_3_latch(clk, dbusWire1, DselectWire2, bbusWire2, lwSwFlag2, dbusWire2, DselectWire3,bbusWire3,lwSwFlag3,branchControlBitWire1,branchControlBitWire2);
   input clk;
   input [31:0] dbusWire1, DselectWire2, bbusWire2;
   input [1:0] lwSwFlag2;
+  input [1:0] branchControlBitWire1;
   output [31:0] dbusWire2, DselectWire3, bbusWire3;
   output [1:0] lwSwFlag3;
+  output [1:0] branchControlBitWire2;
   reg [31:0] dbusWire2, DselectWire3, bbusWire3;
   reg [1:0] lwSwFlag3;
+  reg [1:0] branchControlBitWire2;
   always @(posedge clk) begin
     dbusWire2 = dbusWire1;
     DselectWire3 = DselectWire2;
     bbusWire3 = bbusWire2;
     lwSwFlag3 = lwSwFlag2;
+    branchControlBitWire2 = branchControlBitWire1;
   end
 endmodule
 //phase 4 pipeline latch(MEM_WB)
-module pipeline_4_latch(clk, dbusWire2, DselectWire3, bbusWire3, lwSwFlag3, dbusWire3, DselectWire4,bbusWire4,lwSwFlag4);
+module pipeline_4_latch(clk, dbusWire2, DselectWire3, bbusWire3, lwSwFlag3, dbusWire3, DselectWire4,bbusWire4,lwSwFlag4,branchControlBitWire2,branchControlBitWire3);
   input clk;
   input [31:0] dbusWire2, DselectWire3, bbusWire3;
   input [1:0] lwSwFlag3;
+  input [1:0] branchControlBitWire2;
   output [31:0] dbusWire3, DselectWire4, bbusWire4;
   output [1:0] lwSwFlag4;
+  output [1:0] branchControlBitWire3;
   reg [31:0] dbusWire3, DselectWire4, bbusWire4;
   reg [1:0] lwSwFlag4;
+  reg [1:0] branchControlBitWire3;
   always @(posedge clk) begin
     dbusWire3 = dbusWire2;
     DselectWire4 = DselectWire3;
     bbusWire4 = bbusWire3;
     lwSwFlag4 = lwSwFlag3;
+    branchControlBitWire3 = branchControlBitWire2;
   end
 endmodule
 
@@ -423,9 +465,9 @@ endmodule
 //The declaration of the entire ALU itself.
 module alu32 (d, Cout, V, a, b, Cin, S);
   output[31:0] d;//the output bus
-  output Cout, V;//Cout is the bit for it it needs to carry over to the next circuit/ V is the overflow bit.
+  output Cout, V;//Cout is the bit for it it needs to carry over ?/ V is the overflow bit.
   input [31:0] a, b;//the two input buses
-  input Cin;//the bit for marking if it is carrying over from a previous circuit
+  input Cin;//the bit for marking if it is carrying over from a ?
   input [2:0] S;//The select bus. It defines the operation to do with input busses a and b
   
   wire [31:0] c, g, p;
@@ -472,8 +514,8 @@ module alu_cell (d, g, p, a, b, c, S);
   
   always @(a,b,c,S,p,g) begin 
     bint = S[0] ^ b;
-    g = a & bint;
-    p = a ^ bint;
+    g = a & bint;//generate carry
+    p = a ^ bint;//proragate carry
     cint = S[1] & c;
    
   if(S[2]==0)
