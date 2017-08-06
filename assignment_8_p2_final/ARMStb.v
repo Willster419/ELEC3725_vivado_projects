@@ -2,395 +2,249 @@
 module ARMStb();
 
 reg  [31:0] instrbus;
-reg  [31:0] instrbusin[0:35];
+reg  [31:0] instrbusin[0:14];
 wire [31:0] iaddrbus, daddrbus;
-reg  [31:0] iaddrbusout[0:35], daddrbusout[0:35];
+reg  [31:0] iaddrbusout[0:14], daddrbusout[0:14];
 wire [31:0] databus;
-reg  [31:0] databusk, databusin[0:35], databusout[0:35];
+reg  [31:0] databusk, databusin[0:14], databusout[0:14];
 reg         clk, reset;
 reg         clkd;
 
 reg [31:0] dontcare;
-reg [24*8:1] iname[0:35];
+reg [24*8:1] iname[0:14];
 integer error, k, ntests;
+//aluImm is 12 bits
+//all opcode parameters to be used
+parameter ADD    = 11'b10001011000;
+parameter ADDI   = 10'b1001000100;
+//parameter ADDI    = 'b;
+//parameter ADDI    = 'b;
+parameter AND    = 11'b10001010000;
+parameter ANDI   = 10'b1001001000;
+//parameter ANDI    = 'b;
+//parameter ANDI    = 'b;
+//CBNZ
+//CBZ
+parameter EOR    = 11'b11001010000;
+parameter EORI   = 10'b1101001000;
+//LDUR
+//parameter LW    = 'b;
+//LSL
+//LSR
+//MOVZ
+parameter ORR    = 11'b10101010000;
+parameter ORRI   = 10'b1011001000;
+//STUR
+//parameter SW    = 'b;
+parameter SUB    = 11'b11001011000;
+parameter SUBI   = 10'b1101000100;
+//parameter SUBI    = 'b;
+//parameter SUBI    = 'b;
+//B
+//parameter B.EQ    = 'b;
+//parameter B.NE    = 'b;
+//parameter SLT    = 'b;
+//parameter SLE    = 'b
 
-	parameter Rformat	= 6'b000000;
-	parameter ADDI		= 6'b000011;
-	parameter SUBI		= 6'b000010;
-	parameter XORI		= 6'b000001;
-	parameter ANDI		= 6'b001111;
-	parameter ORI		= 6'b001100;
-	parameter LW		= 6'b011110;
-	parameter SW		= 6'b011111;
-	parameter BEQ		= 6'b110000;
-	parameter BNE		= 6'b110001;
-	parameter ADD		= 6'b000011;
-	parameter SUB		= 6'b000010;
-	parameter XOR		= 6'b000001;
-	parameter AND		= 6'b000111;
-	parameter OR		= 6'b000100;
-	parameter SLT		= 6'b110110;
-	parameter SLE		= 6'b110111;
+//register parameters
+parameter R0  = 5'b00000;
+parameter R20 = 5'b10100;
+parameter R21 = 5'b10101;
+parameter R22 = 5'b10110;
+parameter R23 = 5'b10111;
+parameter R24 = 5'b11000;
+parameter R25 = 5'b11001;
+parameter R26 = 5'b11010;
+parameter R27 = 5'b11011;
+parameter R28 = 5'b11100;
+parameter R29 = 5'b11101;
+parameter R30 = 5'b11110;
+parameter R31 = 5'b11111;
+
+//other parameterz to be used
+parameter zeroSham = 6'b000000;
 
 ARMS dut(.reset(reset),.clk(clk),.iaddrbus(iaddrbus),.ibus(instrbus),.daddrbus(daddrbus),.databus(databus));
 
 initial begin
 // This test file runs the following program.
-
-iname[0] = "ADDI  R20, R0, #-1";
-iname[1] = "ADDI  R21, R0, #1";
-iname[2] = "ADDI  R22, R0, #2";
-iname[3] = "LW    R24, 0(R20)";
-iname[4] = "LW    R25, 0(R21)";
-iname[5] = "SW    1000(R22), R20";
-iname[6] = "SW    2(R0), R21";
-iname[7] = "ADD   R26, R24, R25";
-iname[8] = "SUBI  R17, R24, 6420";
-iname[9] = "SUB   R27, R24, R25";
-iname[10] = "ANDI R18, R24, #0";     
-iname[11] = "AND  R28, R24, R0";     
-iname[12] = "XORI R19, R24, 6420";
-iname[13] = "XOR  R29, R24, R25";
-iname[14] = "ORI  R20, R24, 6420";
-iname[15] = "OR   R30, R24, R25";
-iname[16] = "SW   0(R26),  R26";
-iname[17] = "SW   0(R17),  R27";
-iname[18] = "SW   1000(R18),  R28"; 
-iname[19] = "SW   0(R19),  R29";
-iname[20] = "SW   0(R20),  R30";
-iname[21] = "SLT  R1,  R0,  R21";  // Setting R1 to 32'h00000001 (since, R0 < R21).
-iname[22] = "ADDI R5,  R0, #1";
-iname[23] = "ADDI R6,  R0, #1";
-iname[24] = "BNE  R0,  R1, #10";   // Branching to (32'h00000060 + 32'h00000004 + 32'h00000028 = 32'h0000008C) since, R0 != R1.
-iname[25] = "ADDI R8,  R0, #1";    // Delay Slot
-//Branched Location - 32'h0000008C //
-iname[26] = "SLE  R2,  R0, R0";    // Setting R2 to 32'h00000001 (since, R0 = R0).
-iname[27] = "NOP";
-iname[28] = "NOP";
-iname[29] = "BEQ  R0,  R2, #25";   // NOT Branching since, R2 != R0. 
-iname[30] = "NOP";                 // Delay Slot
-iname[31] = "BEQ  R2,  R2, #10";   // Branching to (32h'0000000A0 + 32'h00000004 + 32'h00000028 = 32'h000000CC)
-iname[32] = "ADDI R20, R0, #1";    // Delay Slot
-//Branched Location - 32'h000000CC //
-iname[33] = "NOP";
-iname[34] = "NOP";
-iname[35] = "NOP";
+//aluImm is only 12 bits long!
+//all register entries should be set to 0 at the beginning
+iname[0]  = "ADDI, R20, R31, #AAA";//testing addi, result in R20 = 00000AAA
+iname[1]  = "ADDI, R31, R23, #002";//testing addi on R31, result in R31 = 00000000
+iname[2]  = "ADDI, R0,  R23, #002";//testing addi on R0, result in R0 = 00000002
+iname[3]  = "ORRI, R21, R24, #001";//testing ori, result in R21 = 00000001
+iname[4]  = "EORI, R22, R20, #000";//testing xori, result in R22 = 00000AAA
+iname[5]  = "ANDI, R23, R0,  #003";//testing andi, result in R23 = 00000002
+iname[6]  = "SUBI, R24, R20, #00A";//testing subi, result in R24 = 00000AA0
+iname[7]  = "ADD,  R25, R20, R0";//testing add, result in R25 = 00000AAC
+iname[8]  = "AND,  R26, R20, R22";//testing and, result in R26 = 00000AAA
+iname[9]  = "EOR,  R27, R23, R21";//testing xor, result in R27 = 00000003
+iname[10] = "ORR,  R28, R25, R23";//testing or, result in R28 = 00000AAE
+iname[11] = "SUB,  R29, R20, R22";//testing sub, result in R29 = 00000000
+iname[12] = "ADDI, R30, R31, #000";//testing addi on R31, result in R30 = 00000000
+iname[13] = "NOP";//nada
+iname[14] = "NOP";//nada
+iname[15] = "NOP";//nada
+iname[16] = "NOP";//nada
+iname[17] = "NOP";//nada
 
 dontcare = 32'hx;
 
-//* ADDI  R20, R0, #-1
+//* ADDI, R20, R31, #AAA
 iaddrbusout[0] = 32'h00000000;
-//            opcode source1   dest      Immediate...
-instrbusin[0]={ADDI, 5'b00000, 5'b10100, 16'hFFFF};
-
+//            opcode rm/ALUImm    rn        rd...
+instrbusin[0]={ADDI, 12'hAAA, R31, R20};
 daddrbusout[0] = dontcare;
 databusin[0] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[0] = dontcare;
 
-//* ADDI  R21, R0, #1
+//* ADDI, R31, R23, #002
 iaddrbusout[1] = 32'h00000004;
-//            opcode source1   dest      Immediate...
-instrbusin[1]={ADDI, 5'b00000, 5'b10101, 16'h0001};
-
+//            opcode rm/ALUImm    rn        rd...
+instrbusin[1]={ADDI, 12'h002, R23, R31};
 daddrbusout[1] = dontcare;
 databusin[1] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[1] = dontcare;
 
-//* ADDI  R22, R0, #2
+//* ADDI, R0,  R23, #002
 iaddrbusout[2] = 32'h00000008;
-//            opcode source1   dest      Immediate...
-instrbusin[2]={ADDI, 5'b00000, 5'b10110, 16'h0002};
-
+//            opcode rm/ALUImm    rn        rd...
+instrbusin[2]={ADDI, 12'h002, R23, R0};
 daddrbusout[2] = dontcare;
 databusin[2] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[2] = dontcare;
 
-//* LW     R24, 0(R20)
+//* ORRI, R21, R24, #001
 iaddrbusout[3] = 32'h0000000C;
-//            opcode source1   dest      Immediate...
-instrbusin[3]={LW, 5'b10100, 5'b11000, 16'h0000};
-
+//            opcode rm/ALUImm    rn        rd...
+instrbusin[3]={ORRI, 12'h001, R24, R21};
 daddrbusout[3] = 32'hFFFFFFFF;
-databusin[3] = 32'hCCCCCCCC;
+databusin[3] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[3] = dontcare;
 
-//* LW     R25, 0(R21)
+//* EORI, R22, R20, #000
 iaddrbusout[4] = 32'h00000010;
-//            opcode source1   dest      Immediate...
-instrbusin[4]={LW, 5'b10101, 5'b11001, 16'h0000};
-
+//            opcode rm/ALUImm    rn        rd...
+instrbusin[4]={EORI, 12'h000, R20, R22};
 daddrbusout[4] = 32'h00000001;
-databusin[4] = 32'hAAAAAAAA;
+databusin[4] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[4] = dontcare;
 
-//* SW     1000(R22), R20
+//* ANDI, R23, R0,  #003
 iaddrbusout[5] = 32'h00000014;
-//            opcode source1   dest      Immediate...
-instrbusin[5]={SW, 5'b10110, 5'b10100, 16'h1000};
-
+//            opcode rm/ALUImm    rn        rd...
+instrbusin[5]={ANDI, 12'h003, R0, R23};
 daddrbusout[5] = 32'h00001002;
 databusin[5] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[5] = 32'hFFFFFFFF;
 
-//* SW     2(R0), R21
+//* SUBI, R24, R20, #00A
 iaddrbusout[6] = 32'h00000018;
-//            opcode source1   dest      Immediate...
-instrbusin[6]={SW, 5'b00000, 5'b10101, 16'h0002};
-
+//            opcode rm/ALUImm    rn        rd...
+instrbusin[6]={SUBI, 12'h00A, R20, R24};
 daddrbusout[6] = 32'h00000002;
 databusin[6] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[6] = 32'h00000001;
 
-//* ADD   R26, R24, R25
+//  op,   rd,  rn,  rm
+//* ADD,  R25, R20, R0
 iaddrbusout[7] = 32'h0000001C;
-//             opcode   source1   source2   dest      shift     Function...
-instrbusin[7]={Rformat, 5'b11000, 5'b11001, 5'b11010, 5'b00000, ADD};
-
+//             op,  rm, shamt,    rn,  rd
+instrbusin[7]={ADD, R0, zeroSham, R20, R25};
 daddrbusout[7] = dontcare;
 databusin[7] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[7] = dontcare;
 
-//* SUBI  R17, R24, 6420
+//  op,   rd,  rn,  rm
+//* AND,  R26, R20, R22
 iaddrbusout[8] = 32'h00000020;
-//            opcode source1   dest      Immediate...
-instrbusin[8]={SUBI, 5'b11000, 5'b10001, 16'h6420};
-
+//             op,  rm, shamt,    rn,  rd
+instrbusin[8]={AND, R22, zeroSham, R20, R26};
 daddrbusout[8] = dontcare;
 databusin[8] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[8] = dontcare;
 
-//* SUB   R27, R24, R25
+//  op,   rd,  rn,  rm
+//* XOR,  R27, R23, R21
 iaddrbusout[9] = 32'h00000024;
-//             opcode   source1   source2   dest      shift     Function...
-instrbusin[9]={Rformat, 5'b11000, 5'b11001, 5'b11011, 5'b00000, SUB};
-
+//             op,  rm, shamt,    rn,  rd
+instrbusin[9]={EOR, R21, zeroSham, R23, R27};
 daddrbusout[9] = dontcare;
 databusin[9] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[9] = dontcare;
 
-//* ANDI   R18, R24, #0             
-iaddrbusout[10] = 32'h00000028;
-//            opcode source1   dest      Immediate...
-instrbusin[10]={ANDI, 5'b11000, 5'b10010, 16'h0000};
-
+//  op,   rd,  rn,  rm
+//* OR,   R28, R25, R23
+iaddrbusout[10] = 32'h0000002C;
+//             op,  rm, shamt,    rn,  rd
+instrbusin[10]={ORR, R23, zeroSham, R25, R28};
 daddrbusout[10] = dontcare;
 databusin[10] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[10] = dontcare;
 
-//* AND    R28, R24, R0           
-iaddrbusout[11] = 32'h0000002C;
-//             opcode   source1   source2   dest      shift     Function...
-instrbusin[11]={Rformat, 5'b11000, 5'b00000, 5'b11100, 5'b00000, AND};
-
+//  op,   rd,  rn,  rm
+//* SUB,  R29, R20, R22
+iaddrbusout[11] = 32'h00000030;
+//             op,  rm, shamt,    rn,  rd
+instrbusin[11]={SUB, R22, zeroSham, R20, R29};
 daddrbusout[11] = dontcare;
 databusin[11] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[11] = dontcare;
 
-//* XORI   R19, R24, 6420
-iaddrbusout[12] = 32'h00000030;
-//            opcode source1   dest      Immediate...
-instrbusin[12]={XORI, 5'b11000, 5'b10011, 16'h6420};
-
+//  op,   rd,  rn,  aluImm
+//* ADDI, R30, R31, #000
+iaddrbusout[12] = 32'h00000034;
+//            opcode rm/ALUImm    rn        rd...
+instrbusin[12]={ADDI, 12'h000, R31, R30};
 daddrbusout[12] = dontcare;
 databusin[12] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[12] = dontcare;
 
-//* XOR    R29, R24, R25
-iaddrbusout[13] = 32'h00000034;
-//             opcode   source1   source2   dest      shift     Function...
-instrbusin[13]={Rformat, 5'b11000, 5'b11001, 5'b11101, 5'b00000, XOR};
-
+//* NOP
+iaddrbusout[13] = 32'h00000038;
+//                   oooooosssssdddddiiiiiiiiiiiiiiii
+instrbusin[13] = 32'b00000000000000000000000000000000;
 daddrbusout[13] = dontcare;
 databusin[13] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[13] = dontcare;
 
-//* ORI    R20, R24, 6420
-iaddrbusout[14] = 32'h00000038;
-//            opcode source1   dest      Immediate...
-instrbusin[14]={ORI, 5'b11000, 5'b10100, 16'h6420};
-
+//* NOP
+iaddrbusout[14] = 32'h0000003C;
+//                   oooooosssssdddddiiiiiiiiiiiiiiii
+instrbusin[14] = 32'b00000000000000000000000000000000;
 daddrbusout[14] = dontcare;
 databusin[14] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[14] = dontcare;
 
-//* OR     R30, R24, R25
-iaddrbusout[15] = 32'h0000003C;
-//             opcode   source1   source2   dest      shift     Function...
-instrbusin[15]={Rformat, 5'b11000, 5'b11001, 5'b11110, 5'b00000, OR};
-
+//* NOP
+iaddrbusout[15] = 32'h00000040;
+//                   oooooosssssdddddiiiiiiiiiiiiiiii
+instrbusin[15] = 32'b00000000000000000000000000000000;
 daddrbusout[15] = dontcare;
 databusin[15] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[15] =  dontcare;
+databusout[15] = dontcare;
 
-//* SW     0(R26),  R26
-iaddrbusout[16] = 32'h00000040;
-//            opcode source1   dest      Immediate...
-instrbusin[16]={SW, 5'b11010, 5'b11010, 16'h0000};
-
-daddrbusout[16] = 32'h77777776;
+//* NOP
+iaddrbusout[16] = 32'h00000044;
+//                   oooooosssssdddddiiiiiiiiiiiiiiii
+instrbusin[16] = 32'b00000000000000000000000000000000;
+daddrbusout[16] = dontcare;
 databusin[16] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[16] = 32'h77777776;
+databusout[16] = dontcare;
 
-//18* SW     0(R17),  R27
-iaddrbusout[17] = 32'h00000044;
-//            opcode source1   dest      Immediate...
-instrbusin[17]={SW, 5'b10001, 5'b11011, 16'h0000};
-
-daddrbusout[17] = 32'hCCCC68AC;
+//* NOP
+iaddrbusout[17] = 32'h00000048;
+//                   oooooosssssdddddiiiiiiiiiiiiiiii
+instrbusin[17] = 32'b00000000000000000000000000000000;
+daddrbusout[17] = dontcare;
 databusin[17] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[17] = 32'h22222222;
-
-//19* SW     1000(R18),  R28           
-iaddrbusout[18] = 32'h00000048;
-//            opcode source1   dest      Immediate...
-instrbusin[18]={SW, 5'b10010, 5'b11100, 16'h1000};
-
-daddrbusout[18] = 32'h00001000;
-databusin[18] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[18] = 32'h00000000;
-
-//20* SW     0(R19),  R29
-iaddrbusout[19] = 32'h0000004C;
-//            opcode source1   dest      Immediate...
-instrbusin[19]={SW, 5'b10011, 5'b11101, 16'h0000};
-
-daddrbusout[19] = 32'hCCCCA8EC;
-databusin[19] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[19] = 32'h66666666;
-
-//21* SW     0(R20),  R30
-iaddrbusout[20] = 32'h00000050;
-//            opcode source1   dest      Immediate...
-instrbusin[20]={SW, 5'b10100, 5'b11110, 16'h0000};
-
-daddrbusout[20] = 32'hCCCCECEC;
-databusin[20] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[20] = 32'hEEEEEEEE;
+databusout[17] = dontcare;
 
 
-//22* SLT  R1,  R0,  R21
-iaddrbusout[21] = 32'h00000054;
-//             opcode   source1   source2   dest      shift     Function...
-instrbusin[21]={Rformat, 5'b00000, 5'b10101, 5'b00001, 5'b00000, SLT};
-daddrbusout[21] = dontcare;
-databusin[21]   = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[21]  = dontcare;
-
-//* ADDI R5,  R0, #1
-iaddrbusout[22] = 32'h00000058;
-//            opcode source1   dest      Immediate...
-instrbusin[22]={ADDI, 5'b00000, 5'b00101, 16'h0001};
-daddrbusout[22] = dontcare;
-databusin[22] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[22] = dontcare;
-
-//* ADDI R6,  R0, #1
-iaddrbusout[23] = 32'h0000005C;
-//            opcode source1   dest      Immediate...
-instrbusin[23]={ADDI, 5'b00000, 5'b00110, 16'h0001};
-daddrbusout[23] = dontcare;
-databusin[23] =   32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[23] =  dontcare;
-
-//* BNE  R0,  R1, #10
-iaddrbusout[24] = 32'h00000060;
-//            opcode source1   dest      Immediate...
-instrbusin[24]={BNE, 5'b00001, 5'b00000, 16'h000A};
-daddrbusout[24] = dontcare;
-databusin[24] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[24] = dontcare;
-
-//* ADDI R8,  R0, #1
-iaddrbusout[25] = 32'h00000064;
-//            opcode source1   dest      Immediate...
-instrbusin[25]={ADDI, 5'b00000, 5'b01000, 16'h0001};
-daddrbusout[25] = dontcare;
-databusin[25] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[25] = dontcare;
-
-//* SLE  R2,  R0, R0
-iaddrbusout[26] = 32'h0000008C;
-//             opcode   source1   source2   dest      shift     Function...
-instrbusin[26]={Rformat, 5'b00000, 5'b00000, 5'b00010, 5'b00000, SLE};
-daddrbusout[26] = dontcare;
-databusin[26] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[26] = dontcare;
-
-//* NOP
-iaddrbusout[27] = 32'h00000090;
-//                   oooooosssssdddddiiiiiiiiiiiiiiii
-instrbusin[27] = 32'b00000000000000000000000000000000;
-daddrbusout[27] = dontcare;
-databusin[27] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[27] = dontcare;
-
-//* NOP
-iaddrbusout[28] = 32'h00000094;
-//                   oooooosssssdddddiiiiiiiiiiiiiiii
-instrbusin[28] = 32'b00000000000000000000000000000000;
-daddrbusout[28] = dontcare;
-databusin[28]  = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[28] = dontcare;
-
-//* BEQ  R0,  R2, #25
-iaddrbusout[29] = 32'h00000098;
-//            opcode source1   dest      Immediate...
-instrbusin[29]={BEQ, 5'b00010, 5'b00000, 16'h0019};
-daddrbusout[29] = dontcare;
-databusin[29] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[29] = dontcare;
-
-//* NOP
-iaddrbusout[30] = 32'h0000009C;
-//                   oooooosssssdddddiiiiiiiiiiiiiiii
-instrbusin[30] = 32'b00000000000000000000000000000000;
-daddrbusout[30] = dontcare;
-databusin[30] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[30] = dontcare;
-
-//* BEQ  R2,  R2, #10
-iaddrbusout[31] = 32'h000000A0;
-//            opcode source1   dest      Immediate...
-instrbusin[31]={BEQ, 5'b00010, 5'b00010, 16'h000A};
-daddrbusout[31] = dontcare;
-databusin[31] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[31] = dontcare;
-
-//* ADDI R20, R0, #1
-iaddrbusout[32] = 32'h000000A4;
-//            opcode source1   dest      Immediate...
-instrbusin[32]={ADDI, 5'b00000, 5'b10100, 16'h0001};
-daddrbusout[32] = dontcare;
-databusin[32] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[32] = dontcare;
-
-//* NOP
-iaddrbusout[33] = 32'h000000CC;
-//                   oooooosssssdddddiiiiiiiiiiiiiiii
-instrbusin[33] = 32'b00000000000000000000000000000000;
-daddrbusout[33] = dontcare;
-databusin[33] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[33] = dontcare;
-
-//* NOP
-iaddrbusout[34] = 32'h000000D0;
-//                   oooooosssssdddddiiiiiiiiiiiiiiii
-instrbusin[34] = 32'b00000000000000000000000000000000;
-daddrbusout[34] = dontcare;
-databusin[34] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[34] = dontcare;
-
-//* NOP
-iaddrbusout[35] = 32'h000000D4;
-//                   oooooosssssdddddiiiiiiiiiiiiiiii
-instrbusin[35] = 32'b00000000000000000000000000000000;
-daddrbusout[35] = dontcare;
-databusin[35] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[35] = dontcare;
-
-
+//this number will be inacurate for a while(the number below)
 // (no. instructions) + (no. loads) + 2*(no. stores) = 35 + 2 + 2*7 = 51
-ntests = 51;
+ntests = 17;
 
 $timeformat(-9,1,"ns",12);
 
@@ -428,7 +282,7 @@ initial begin
   #5
   $display ("Time=%t\n  clk=%b", $realtime, clk);
 
-for (k=0; k<= 35; k=k+1) begin
+for (k=0; k<= 20; k=k+1) begin
     clk=1;
     $display ("Time=%t\n  clk=%b", $realtime, clk);
     #2

@@ -22,12 +22,15 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   wire [1:0] setControlBitsWire1;
   wire [1:0] setControlBitsWire2;
   //for SLT/SLE operations
-  wire ZBit;//high when rs(a) - rt(b) = 0, 1 otherwise
+  //LEG_UPDATE: rs->rn, rt->rm
+  wire ZBit;//high when rn(a) - rm(b) = 0, 1 otherwise
   wire [31:0] potentialSLEBit;//the value to set to dbus if it is a SLE operation
   wire [31:0] potentialSLTBit;
   wire [31:0] actualSLBit;
   //the cout for the alu
   wire ALUCoutWire;
+  //LEG_UPDATE: add the overflow counter from the ALU
+  wire overflowWire;
   //BEQ and BNE congtrol bits
   //00 = noting, 01 = BEQ, 10 = BNE
   reg [1:0] branchControlBit;
@@ -40,24 +43,40 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   wire [31:0] branchCalcWire1;//from immediate, to branchCalcwire2
   //the wire for the branch calculation, part 2 (+4)
   wire [31:0] branchCalcWire2;//from branchCalcWire1, to mux4
-  //the new bus things
+  //the new buses to and from the ddr memory
   output [31:0] daddrbus;//from EX_MEM, to SIM_OUT
   inout [31:0] databus;//from SIM_IN/EX_MEM, to SIM_OUT/MEM_WB
   //decoder tings
-  wire [5:0] opCode;//from IF_ID
-  wire [5:0] funktion;//from IF_ID
+  //LEG_UPDATE: opcode is 11 bits long now
+  wire [10:0] opCode;//from IF_ID
+  //LEG_UPDATE: funktion is no longer a thing, everything is in the opcode
+  //wire [5:0] funktion;//from IF_ID
   //ibus
   input [31:0] ibus;//in for IF_ID
   wire [31:0] ibusWire;//out for IF_ID
   //Aselect
   wire [31:0] AselectWire;//from rs, to regfile
-  wire [5:0] rs;//from ibusWire, to AselectWire
+  //LEG_UPDATE: rs->rn
+  wire [5:0] rn;//from ibusWire, to AselectWire
   //Bselect
   wire [31:0] BselectWire;//from rt, to regfile
-  wire [5:0] rt;//from ibsuWire, to BselectWire and mxu1
+  //LEG_UPDATE: rt->rm
+  wire [5:0] rm;//from ibsuWire, to BselectWire and mxu1
+  //LEG_UPDATE: add a bit for MOVZ select
+  //mov select
+  reg movBit1;
+  wire movBit2;
   //imm select
   reg immBit1;//from IF_ID(ibusWire), to mux1 and ID_EX
   wire immBit2;//from ID_EX, to mux2
+  //the NZVC bit
+  wire [3:0]NZVC;
+  //the control for setting NZVC
+  reg NZVCSetBit;
+  wire NZVCSetBitWire1;
+  //LEG_UPDATE: add a control bit set for LSL and LSR
+  reg [1:0] shiftBit1;
+  wire [1:0] shiftBit2;
   //load word save word flag
   reg [1:0] lwSwFlag1;//from IF_ID, to ID_EX
   wire [1:0] lwSwFlag2;//from ID_EX, to EX_MEM
@@ -65,11 +84,13 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   wire [1:0] lwSwFlag4;//from MEM_WB, to mux3
   //Dselect
   wire [31:0] DselectWire1;//from muxOut, to ID_EX
+  //LEG_UPDATE: rd->rd (no change)
   wire [5:0] rd;//from ID_EX, to mux1
   wire [31:0] DselectWire2;//from ID_EX, to EX_MM
   wire [31:0] DselectWire3;//from EX_MEM, to MEM_WB
   wire [31:0] DselectWire3_5;//from MEM_WB, to mux3
   wire [31:0] DselectWire4;//from mux3, to regfile
+  //LEG_UPDATE: new rt is also rd
   //abus
   //output [31:0] abus;//from ID_EX, to SIM_OUT
   wire [31:0] abusWire1;//from regOut, to ID_EX
@@ -92,9 +113,19 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   wire [31:0] mux2Out;//from bbusWire2/immWire2, to ALU
   //mux4 deciding wire
   wire mux4Controller;//controls the pc address bus
+  //LEG_UPDATE: remove sign extended IMM wire, it's not a thing
   //immediate
-  wire [31:0] immWire1;//from IF_ID, to ID_EX
-  wire [31:0] immWire2;//from ID_EX, to mux2
+  //wire [31:0] immWire1;//from IF_ID, to ID_EX
+  //wire [31:0] immWire2;//from ID_EX, to mux2
+  //and add the new parsed wires
+  wire [31:0] ALUImmWire1;
+  wire [31:0] ALUImmWire2;
+  wire [31:0] BranchAddrWire1;
+  wire [31:0] CondBranchAddrType1Wire1;//for b.cond
+  wire [31:0] CondBranchAddrType2Wire1;//for CBZ/CBNZ
+  wire [31:0] MOVImmWire1;
+  wire [31:0] MOVImmWire2;
+  wire [5:0] shamt;
   //S
   reg [2:0] SWire1;//from IF_ID, to ID_EX
   wire [2:0] SWire2;//from ID_EX, to ALU
@@ -104,11 +135,14 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //init
   initial begin
     immBit1 = 1'bx;
+    movBit1 = 1'bx;
+    NZVCSetBit = 1'bx;
     CinWire1 = 1'bx;
     SWire1 = 3'bxxx;
     lwSwFlag1 = 2'bxx;
     branchControlBit = 2'b0;
     setControlBits = 2'b00;
+    shiftBit1 = 2'bxx;
   end
   //latch for pipeline 0(PC)
   //module pipeline_0_latch(clk, iaddrbusWire1, iaddrbusOut);
@@ -125,142 +159,233 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   pipeline_1_latch IF_ID(.clk(clk),.ibus(ibus),.ibusWire(ibusWire),.PCIn(iaddrbusWire4),.PCOut(PCWire1));
   //PIPELINE_1_START
   //decode the input command
-  assign opCode = ibusWire[31:26];
-  assign rs = ibusWire[25:21];
-  assign rt = ibusWire[20:16];
-  assign rd = ibusWire[15:11];
-  assign funktion = ibusWire[5:0];
-  assign immWire1 = ibusWire[15]? {16'b1111111111111111,ibusWire[15:0]} : {16'b0000000000000000,ibusWire[15:0]};
+  //LEG_UPDATE: updated to new leg instruction sets
+  assign opCode = ibusWire[31:21];
+  assign rn = ibusWire[9:5];//old rs
+  assign rm = ibusWire[20:16];//old rt
+  assign rd = ibusWire[4:0];
+  assign shamt = ibusWire[15:10];
+  //LEG_UPDATE: added the following
+  //64_BIT_TODO: all these
+  assign ALUImmWire1 = {20'b0, ibusWire[21:10]};
+  assign BranchAddrWire1 = ibusWire[25]? {4'b1111,ibusWire[25:0]} : {16'b0000,ibusWire[25:0],2'b00};
+  //TODO: ask marpaung about CondBranchAddr
+  assign CondBranchAddrType1Wire1 = ibusWire[15]? {11'b11111111111,ibusWire[15:0]} : {11'b00000000000,ibusWire[15:0]};//b.cond
+  assign CondBranchAddrType2Wire1 = ibusWire[15]? {11'b11111111111,ibusWire[15:0]} : {11'b00000000000,ibusWire[15:0]};//CBZ, a truncation of CondBranchAddrType1Wire1
+  assign MOVImmWire1= {16'b0, ibusWire[20:5]};
+  //LEG_UPDATE: remove the following
+  //assign immWire1 = ibusWire[15]? {16'b1111111111111111,ibusWire[15:0]} : {16'b0000000000000000,ibusWire[15:0]};
   //for the change in the opcode which is like always
   always @(ibusWire) begin
-  //first mux value is to assume 0
-  immBit1 = 1;
+  immBit1 = 0;
+  movBit1 = 0;
   CinWire1 = 0;
   branchControlBit = 0;
   setControlBits = 0;
+  NZVCSetBit = 0;
   //assume not doing anything with the load or save
   lwSwFlag1 = 2'b00;
+  shiftBit1 = 2'b00;
   //write the cases for the opcode (immediate)
-  case (opCode)
-    6'b000011: begin
+  //LEG_UPDATE: updated opcodes
+  casez (opCode)
+    11'b10001011000: begin
+      //add
+      SWire1 = 3'b010;//add
+    end
+    11'b1001000100?: begin
       //addi
       SWire1 = 3'b010;
+      immBit1 = 1;
     end
-    6'b000010: begin
-      //subi
-      SWire1 = 3'b011;
-      CinWire1 = 1;
+    11'b1011000100?: begin
+      //addis
+      SWire1 = 3'b010;
+      immBit1 = 1;
+      NZVCSetBit = 1;
     end
-    6'b000001: begin
-      //xori
-      SWire1 = 3'b000;
+    11'b10101011000: begin
+      //adds
+      SWire1 = 3'b010;
+      NZVCSetBit = 1;
     end
-    6'b001111: begin
+    11'b10001010000: begin
+      //and
+      SWire1 = 3'b110;//and
+    end
+    11'b1001001000?: begin
       //andi
       SWire1 = 3'b110;
+      immBit1 = 1;
     end
-    6'b001100: begin
-      //ori
-      SWire1 = 3'b100;
+    11'b1111001000?: begin
+      //andis
+      SWire1 = 3'b110;
+      immBit1 = 1;
+      NZVCSetBit = 1;
     end
-    6'b011110: begin
+    11'b11101010000: begin
+      //ands
+      SWire1 = 3'b110;
+      NZVCSetBit = 1;
+    end
+    11'b10110101???: begin
+      //CBNZ
+      //TODO
+    end
+    11'b10110100???: begin
+      //CBZ
+      //TODO
+    end
+    11'b11001010000: begin
+      //EOR (xor)
+      SWire1 = 3'b000;
+    end
+    11'b1101001000?: begin
+      //EORI(xori)
+      SWire1 = 3'b000;
+      immBit1 = 1;
+    end
+    11'b11111000010: begin
+      //LDUR
       //load word, but still addi
       SWire1 = 3'b010;
       lwSwFlag1 = 2'b01;
     end
-    6'b011111: begin
+    11'b11010011011: begin
+      //LSL
+      shiftBit1 = 2'b01;
+    end
+    11'b11010011010: begin
+      //LSR
+      shiftBit1 = 2'b10;
+    end
+    11'b110100101??: begin
+      //MOVZ
+      movBit1 =1;
+    end
+    11'b10101010000: begin
+      //ORR(or)
+      SWire1 = 3'b100;
+    end
+    11'b1011001000?: begin
+      //ORRI(ori)
+      SWire1 = 3'b100;
+      immBit1 = 1;
+    end
+    11'b11111000000: begin
+      //STUR
       //store word, but still addi
       SWire1 = 3'b010;
       lwSwFlag1 = 2'b10;
     end
-    6'b110000: begin
-      //BEQ
+    11'b11001011000: begin
+      //sub
+      SWire1 = 3'b011;
+      CinWire1 = 1;
+    end
+    11'b1101000100?: begin
+      //subi
+      SWire1 = 3'b011;
+      CinWire1 = 1;
+      immBit1 = 1;
+    end
+    11'b1111000100?: begin
+      //subis
+      SWire1 = 3'b011;
+      CinWire1 = 1;
+      immBit1 = 1;
+      NZVCSetBit = 1;
+    end
+    11'b11101011000: begin
+      //subs
+      SWire1 = 3'b011;
+      CinWire1 = 1;
+      NZVCSetBit = 1;
+    end
+    //TODO: all branches
+    11'b000101?????: begin
+      //B
       SWire1 = 3'b010;
       //set control bit
       branchControlBit = 2'b01;
     end
-    6'b110001: begin
-      //BNE
+    11'b01010101???: begin
+      //B.EQ
       SWire1 = 3'b010;
       //set control bit
       branchControlBit = 2'b10;
     end
-    //if 00000
-    6'b000000: begin
-      //write the mux value here
-      immBit1= 0;
-      //then write the cases for the funct
-      case (funktion)
-        6'b000011: begin
-          //add
-          SWire1 = 3'b010;
-        end
-        6'b000010: begin
-          //sub
-          SWire1 = 3'b011;
-          CinWire1 = 1;
-        end
-        6'b000001: begin
-          //xor
-          SWire1 = 3'b000;
-        end
-        6'b000111: begin
-          //and
-          SWire1 = 3'b110;
-        end
-        6'b000100: begin
-          //or
-          SWire1 = 3'b100;
-        end
-        6'b110110: begin
-          //SLT
-          //00 = nothing, 01 = SLT, 10 = SLE
-          setControlBits = 2'b01;
-          //set to subtraction
-          SWire1 = 3'b011;
-        end
-        6'b110111: begin
-          //SLE
-          //00 = nothing, 01 = SLT, 10 = SLE
-          setControlBits = 2'b10;
-          //set to subtraction
-          SWire1 = 3'b011;
-        end
-      endcase
+    11'b01010110???: begin
+      //B.NE
+      SWire1 = 3'b010;
+      //set control bit
+      branchControlBit = 2'b01;
     end
+    11'b01010111???: begin
+      //B.LT(signed)
+      SWire1 = 3'b010;
+      //set control bit
+      branchControlBit = 2'b10;
+    end
+    11'b01011000???: begin
+      //B.GE(signed)
+      SWire1 = 3'b010;
+      //set control bit
+      branchControlBit = 2'b10;
+    end
+    //TODO: figure out if these are ever used
+    /*11'b: begin
+      //SLT
+      //00 = nothing, 01 = SLT, 10 = SLE
+      setControlBits = 2'b01;
+      //set to subtraction
+      SWire1 = 3'b011;
+    end
+    11'b: begin
+      //SLE
+      //00 = nothing, 01 = SLT, 10 = SLE
+      setControlBits = 2'b10;
+      //set to subtraction
+      SWire1 = 3'b011;
+    end*/
   endcase
   end
   //write the select lines
-  assign AselectWire = 1 << rs;
+  assign AselectWire = 1 << rn;
   //only write to Bselect for real if it's actually goign to use Bselect
   //i don't think this line matters but i feel like it's good pratice
   //assign BselectWire = immBit1?  32'hxxxxxxxx: 1 << rt;
-  assign BselectWire = 1 << rt;
+  assign BselectWire = 1 << rm;
+  //LEG_UPDATE: rt->rm
+  //LEG_UPDATE: dbus always holds the result for the alu output now
   //mux1
   //Rd for R, imm = false
   //Rt for I, imm = true
-  assign DselectWire1 = immBit1? 1<<rt : 1<<rd;
+  //assign DselectWire1 = immBit1? 1<<rm : 1<<rd;
+  assign DselectWire1 = 1<<rd;
   regfile Reggie3(.clk(clk),.Aselect(AselectWire),.Bselect(BselectWire),.Dselect(DselectWire4),.abus(abusWire1),.bbus(bbusWire1),.dbus(mux3Out));
   //update the muxWire4 controll if the instruction is BEQ or BNE, and if it is actually equal
   //mux4Controller = 1 if ((BEQ and abus == bbus) or (BNE and bbus != abus)), 0 otherwise
   //00 = noting, 01 = BEQ, 10 = BNE
   assign mux4Controller = ((!clk) && ((branchControlBit==2'b01) && (abusWire1 == bbusWire1)) || ((branchControlBit==2'b10) && (abusWire1!=bbusWire1)))? 1: 0;
+  //LEG_UPDATE: TODO: actually do the new branch calculation
   //the branch calculation
-  assign branchCalcWire1 = immWire1 << 2;
-  assign branchCalcWire2 = branchCalcWire1 + PCWire1;
+  //assign branchCalcWire1 = immWire1 << 2;
+  //assign branchCalcWire2 = branchCalcWire1 + PCWire1;
   //PIPELINE_1_END
   //latch for pipeline 2(ID_EX)
-  pipeline_2_latch ED_EX(.clk(clk),.abusWire1(abusWire1),.bbusWire1(bbusWire1),.DselectWire1(DselectWire1),.immWire1(immWire1),.SWire1(SWire1),
-  .CinWire1(CinWire1),.immBit1(immBit1),.lwSwFlag1(lwSwFlag1),.abusWire2(abusWire2),.bbusWire2(bbusWire2),.immWire2(immWire2),.CinWire2(CinWire2),
+  pipeline_2_latch ED_EX(.clk(clk),.abusWire1(abusWire1),.bbusWire1(bbusWire1),.DselectWire1(DselectWire1),.ALUImmWire1(ALUImmWire1),.SWire1(SWire1),
+  .CinWire1(CinWire1),.immBit1(immBit1),.lwSwFlag1(lwSwFlag1),.abusWire2(abusWire2),.bbusWire2(bbusWire2),.ALUImmWire2(ALUImmWire2),.CinWire2(CinWire2),
   .DselectWire2(DselectWire2),.immBit2(immBit2),.SWire2,.lwSwFlag2(lwSwFlag2),.setControlBits(setControlBits),.setControlBitsWire1(setControlBitsWire1),
-  .branchControlBit(branchControlBit),.branchControlBitWire1(branchControlBitWire1));
+  .branchControlBit(branchControlBit),.branchControlBitWire1(branchControlBitWire1),.NZVCSetBit(NZVCSetBit),.NZVCSetBitWire1(NZVCSetBitWire1));
   //PIPELINE_2_START
   //mux2
-  //immWire for true, Bselet for false
-  assign mux2Out = immBit2? immWire2: bbusWire2;
+  //ALUImmWire2 for true, Bselet for false
+  assign mux2Out = immBit2? ALUImmWire2: bbusWire2;
   //make the ALU
   //module alu32 (d, Cout, V, a, b, Cin, S);
-  alu32 literallyLogic(.d(dbusWire1),.a(abusWire2),.b(mux2Out),.Cin(CinWire2),.S(SWire2),.Cout(ALUCoutWire));
+  alu32 literallyLogic(.d(dbusWire1),.a(abusWire2),.b(mux2Out),.Cin(CinWire2),.S(SWire2),.Cout(ALUCoutWire),.V(overflowWire));
   //wipe the dbus if it's an SLT or an SLE
   //zero result flag
   assign ZBit = (dbusWire1==0)? 1:0;
@@ -274,9 +399,18 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //the wire that is used for the new dbusWire, adds a check for if the result needs to be the SLT or not
   //SLE_MUX_TEST
   assign dbusWire1_5 = (setControlBitsWire1 > 2'b00)? actualSLBit:dbusWire1;
+  //LEG_UPDATE: if the NZVCSetBit is set, then set the NZVC values
+  //N (negative)
+  assign NZVC[3] = (NZVCSetBitWire1 && (dbusWire1[31] == 1'b1))? 1'b1:1'bz;
+  //Z (zero)
+  assign NZVC[3] = (NZVCSetBitWire1&ZBit)? 1'b1:1'bz;
+  //V (overflow, signed)
+  assign NZVC[3] = (NZVCSetBitWire1&overflowWire)? 1'b1:1'bz;
+  //C (carry)
+  assign NZVC[3] = (NZVCSetBitWire1&ALUCoutWire)? 1'b1:1'bz;
   //PIPELINE_2_END
   //latch for pipeline 3(EX_MEM)
-  pipeline_3_latch EX_MEME (.clk(clk),.dbusWire1(dbusWire1_5),.DselectWire2(DselectWire2),.bbusWire2(bbusWire2),.lwSwFlag2(lwSwFlag2),.dbusWire2(dbusWire2),
+  pipeline_3_latch EX_MEME (.clk(clk),.dbusWire1(dbusWire1),.DselectWire2(DselectWire2),.bbusWire2(bbusWire2),.lwSwFlag2(lwSwFlag2),.dbusWire2(dbusWire2),
   .DselectWire3(DselectWire3),.bbusWire3(bbusWire3),.lwSwFlag3(lwSwFlag3),.branchControlBitWire1(branchControlBitWire1),.branchControlBitWire2(branchControlBitWire2));
   //PIPELINE_3_SRART
   //assign output values
@@ -324,38 +458,42 @@ module pipeline_1_latch(clk, ibus, ibusWire, PCIn, PCOut);
   end
 endmodule
 //phase 2 pipeline latch(ID_EX)
-module pipeline_2_latch(clk, abusWire1, bbusWire1, DselectWire1, immWire1, SWire1, CinWire1,immBit1,lwSwFlag1,
-abusWire2,bbusWire2,immWire2,SWire2,CinWire2,DselectWire2,immBit2,lwSwFlag2,setControlBits,setControlBitsWire1,
-branchControlBit,branchControlBitWire1);
+module pipeline_2_latch(clk, abusWire1, bbusWire1, DselectWire1, ALUImmWire1, SWire1, CinWire1,immBit1,lwSwFlag1,
+abusWire2,bbusWire2,ALUImmWire2,SWire2,CinWire2,DselectWire2,immBit2,lwSwFlag2,setControlBits,setControlBitsWire1,
+branchControlBit,branchControlBitWire1,NZVCSetBit,NZVCSetBitWire1);
   input clk, CinWire1,immBit1;
-  input [31:0] abusWire1, bbusWire1, DselectWire1, immWire1;
+  input [31:0] abusWire1, bbusWire1, DselectWire1, ALUImmWire1;
   input [2:0] SWire1;
   input [1:0] lwSwFlag1;
   input [1:0] setControlBits;
   input [1:0] branchControlBit;
+  input NZVCSetBit;
   output CinWire2,immBit2;
-  output [31:0] abusWire2, bbusWire2, DselectWire2, immWire2;
+  output [31:0] abusWire2, bbusWire2, DselectWire2, ALUImmWire2;
   output [2:0] SWire2;
   output [1:0] lwSwFlag2;
   output [1:0] setControlBitsWire1;
   output [1:0] branchControlBitWire1;
+  output NZVCSetBitWire1;
   reg CinWire2,immBit2;
-  reg [31:0] abusWire2, bbusWire2, DselectWire2, immWire2;
+  reg [31:0] abusWire2, bbusWire2, DselectWire2, ALUImmWire2;
   reg [2:0] SWire2;
   reg [1:0] lwSwFlag2;
   reg [1:0] setControlBitsWire1;
   reg [1:0] branchControlBitWire1;
+  reg NZVCSetBitWire1;
   always @(posedge clk) begin
     abusWire2 = abusWire1;
     bbusWire2 = bbusWire1;
     DselectWire2 = DselectWire1;
-    immWire2 = immWire1;
+    ALUImmWire2 = ALUImmWire1;
     SWire2 = SWire1;
     CinWire2 = CinWire1;
     immBit2 = immBit1;
     lwSwFlag2 = lwSwFlag1;
     setControlBitsWire1 = setControlBits;
     branchControlBitWire1 = branchControlBit;
+    NZVCSetBitWire1 = NZVCSetBit;
   end
 endmodule
 //phase 3 pipeliune latch(EX_MEM)
@@ -408,15 +546,14 @@ module regfile(
   output [31:0] bbus,//data out
   input clk
   );
-
-  assign abus = Aselect[0] ? 32'b0 : 32'bz;
-  assign bbus = Bselect[0] ? 32'b0 : 32'bz;
+  assign abus = Aselect[31] ? 32'b0 : 32'bz;
+  assign bbus = Bselect[31] ? 32'b0 : 32'bz;
   DNegflipFlop myFlips[30:0](//32 wide register
       .dbus(dbus),
       .abus(abus),
-      .Dselect(Dselect[31:1]),
-      .Bselect(Bselect[31:1]),
-      .Aselect(Aselect[31:1]),
+      .Dselect(Dselect[30:0]),
+      .Bselect(Bselect[30:0]),
+      .Aselect(Aselect[30:0]),
       .bbus(bbus),
       .clk(clk)
     );
