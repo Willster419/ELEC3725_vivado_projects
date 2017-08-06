@@ -95,6 +95,7 @@ module cpu5(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //immediate
   wire [31:0] immWire1;//from IF_ID, to ID_EX
   wire [31:0] immWire2;//from ID_EX, to mux2
+  wire [31:0] branchWire;
   //S
   reg [2:0] SWire1;//from IF_ID, to ID_EX
   wire [2:0] SWire2;//from ID_EX, to ALU
@@ -131,6 +132,7 @@ module cpu5(ibus,clk,daddrbus,databus,reset,iaddrbus);
   assign rd = ibusWire[15:11];
   assign funktion = ibusWire[5:0];
   assign immWire1 = ibusWire[15]? {16'b1111111111111111,ibusWire[15:0]} : {16'b0000000000000000,ibusWire[15:0]};
+  assign branchWire = ibusWire[15]? {14'b11111111111111, ibusWire[15:0], 2'b00} : {14'b00000000000000, ibusWire[15:0], 2'b00};
   //for the change in the opcode which is like always
   always @(ibusWire) begin
   //first mux value is to assume 0
@@ -247,7 +249,7 @@ module cpu5(ibus,clk,daddrbus,databus,reset,iaddrbus);
   assign mux4Controller = ((!clk) && ((branchControlBit==2'b01) && (abusWire1 == bbusWire1)) || ((branchControlBit==2'b10) && (abusWire1!=bbusWire1)))? 1: 0;
   //the branch calculation
   assign branchCalcWire1 = immWire1 << 2;
-  assign branchCalcWire2 = branchCalcWire1 + PCWire1;
+  assign branchCalcWire2 = branchWire + PCWire1;
   //PIPELINE_1_END
   //latch for pipeline 2(ID_EX)
   pipeline_2_latch ED_EX(.clk(clk),.abusWire1(abusWire1),.bbusWire1(bbusWire1),.DselectWire1(DselectWire1),.immWire1(immWire1),.SWire1(SWire1),
