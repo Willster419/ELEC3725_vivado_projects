@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="116935000fs"></ZoomStartTime>
-      <ZoomEndTime time="152535001fs"></ZoomEndTime>
-      <Cursor1Time time="130585000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="35901696fs"></ZoomEndTime>
+      <Cursor1Time time="500000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="175"></NameColumnWidth>
-      <ValueColumnWidth column_width="128"></ValueColumnWidth>
+      <ValueColumnWidth column_width="126"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="32" />
+   <WVObjectSize size="35" />
    <wvobject fp_name="/ARMStb/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -103,6 +103,10 @@
       <obj_property name="ObjectShortName">DselectWire1[31:0]</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
+   <wvobject fp_name="/ARMStb/dut/NZVCSetBit" type="logic">
+      <obj_property name="ElementShortName">NZVCSetBit</obj_property>
+      <obj_property name="ObjectShortName">NZVCSetBit</obj_property>
+   </wvobject>
    <wvobject fp_name="/ARMStb/dut/abusWire2" type="array">
       <obj_property name="ElementShortName">abusWire2[31:0]</obj_property>
       <obj_property name="ObjectShortName">abusWire2[31:0]</obj_property>
@@ -117,11 +121,6 @@
       <obj_property name="ElementShortName">mux2Out[31:0]</obj_property>
       <obj_property name="ObjectShortName">mux2Out[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/ARMStb/dut/dbusWire1" type="array">
-      <obj_property name="ElementShortName">dbusWire1[31:0]</obj_property>
-      <obj_property name="ObjectShortName">dbusWire1[31:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
-   </wvobject>
    <wvobject fp_name="/ARMStb/dut/SWire2" type="array">
       <obj_property name="ElementShortName">SWire2[2:0]</obj_property>
       <obj_property name="ObjectShortName">SWire2[2:0]</obj_property>
@@ -130,6 +129,20 @@
    <wvobject fp_name="/ARMStb/dut/DselectWire2" type="array">
       <obj_property name="ElementShortName">DselectWire2[31:0]</obj_property>
       <obj_property name="ObjectShortName">DselectWire2[31:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/dbusWire1" type="array">
+      <obj_property name="ElementShortName">dbusWire1[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dbusWire1[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/NZVCSetBitWire1" type="logic">
+      <obj_property name="ElementShortName">NZVCSetBitWire1</obj_property>
+      <obj_property name="ObjectShortName">NZVCSetBitWire1</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/NZVC" type="array">
+      <obj_property name="ElementShortName">NZVC[3:0]</obj_property>
+      <obj_property name="ObjectShortName">NZVC[3:0]</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/dbusWire2" type="array">

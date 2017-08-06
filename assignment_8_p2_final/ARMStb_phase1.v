@@ -2,27 +2,27 @@
 module ARMStb();
 
 reg  [31:0] instrbus;
-reg  [31:0] instrbusin[0:23];
+reg  [31:0] instrbusin[0:14];
 wire [31:0] iaddrbus, daddrbus;
-reg  [31:0] iaddrbusout[0:23], daddrbusout[0:23];
+reg  [31:0] iaddrbusout[0:14], daddrbusout[0:14];
 wire [31:0] databus;
-reg  [31:0] databusk, databusin[0:23], databusout[0:23];
+reg  [31:0] databusk, databusin[0:14], databusout[0:14];
 reg         clk, reset;
 reg         clkd;
 
 reg [31:0] dontcare;
-reg [24*8:1] iname[0:23];
+reg [24*8:1] iname[0:14];
 integer error, k, ntests;
 //aluImm is 12 bits
 //all opcode parameters to be used
 parameter ADD    = 11'b10001011000;
 parameter ADDI   = 10'b1001000100;
-parameter ADDIS  = 10'b1011000100;
-parameter ADDS   = 11'b10101011000;
+//parameter ADDI    = 'b;
+//parameter ADDI    = 'b;
 parameter AND    = 11'b10001010000;
 parameter ANDI   = 10'b1001001000;
-parameter ANDIS  = 10'b1111001000;
-parameter ANDS   = 11'b11101010000;
+//parameter ANDI    = 'b;
+//parameter ANDI    = 'b;
 //CBNZ
 //CBZ
 parameter EOR    = 11'b11001010000;
@@ -38,8 +38,8 @@ parameter ORRI   = 10'b1011001000;
 //parameter SW    = 'b;
 parameter SUB    = 11'b11001011000;
 parameter SUBI   = 10'b1101000100;
-parameter SUBIS  = 10'b1111000100;
-parameter SUBS   = 11'b11101011000;
+//parameter SUBI    = 'b;
+//parameter SUBI    = 'b;
 //B
 //parameter B.EQ    = 'b;
 //parameter B.NE    = 'b;
@@ -70,7 +70,6 @@ initial begin
 // This test file runs the following program.
 //aluImm is only 12 bits long!
 //all register entries should be set to 0 at the beginning
-//phase 1: testing basic op commands
 iname[0]  = "ADDI, R20, R31, #AAA";//testing addi, result in R20 = 00000AAA
 iname[1]  = "ADDI, R31, R23, #002";//testing addi on R31, result in R31 = 00000000
 iname[2]  = "ADDI, R0,  R23, #002";//testing addi on R0, result in R0 = 00000002
@@ -84,24 +83,11 @@ iname[9]  = "EOR,  R27, R23, R21";//testing xor, result in R27 = 00000003
 iname[10] = "ORR,  R28, R25, R23";//testing or, result in R28 = 00000AAE
 iname[11] = "SUB,  R29, R20, R22";//testing sub, result in R29 = 00000000
 iname[12] = "ADDI, R30, R31, #000";//testing addi on R31, result in R30 = 00000000
-//phase 2: testing basic op codes with the set flags
-iname[13] = "SUBIS,R20, R0,  #003";//testing subis, n flag, result in R20 = FFFFFFFF
-iname[14] = "SUBS, R21, R25, R28";//testing subs, n flag, result in R21 = FFFFFFFE
-iname[15] = "ADDIS,R22, R31, #000";//testing addis, z flag, result in R22 = 00000000
-iname[16] = "ADDS  R23, R20, R23";//testing adds, c flag, result in R23 = 00000001
-iname[17] = "ANDIS,R24, R20, #002";//testing andis, reseting n,z flags to low, result in R24 = 00000002
-iname[18] = "ANDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFE
-//TODO: impliment shift so i can test the v flag
-/*iname[14] = "NOP";//nada
+iname[13] = "NOP";//nada
+iname[14] = "NOP";//nada
 iname[15] = "NOP";//nada
 iname[16] = "NOP";//nada
-iname[17] = "NOP";//nada*/
-
-iname[19] = "NOP";//nada
-iname[20] = "NOP";//nada
-iname[21] = "NOP";//nada
-iname[22] = "NOP";//nada
-iname[23] = "NOP";//nada
+iname[17] = "NOP";//nada
 
 dontcare = 32'hx;
 
@@ -215,104 +201,50 @@ daddrbusout[12] = dontcare;
 databusin[12] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[12] = dontcare;
 
-//  op,   rd,  rn,  aluImm
-//* SUBIS,R20, R0,  #003
+//* NOP
 iaddrbusout[13] = 32'h00000038;
-//            opcode rm/ALUImm    rn        rd...
-instrbusin[13] = {SUBIS, 12'h003, R0, R20};
+//                   oooooosssssdddddiiiiiiiiiiiiiiii
+instrbusin[13] = 32'b00000000000000000000000000000000;
 daddrbusout[13] = dontcare;
 databusin[13] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[13] = dontcare;
 
-//  op,   rd,  rn,  rm
-//* SUBS, R21, R25, R28
+//* NOP
 iaddrbusout[14] = 32'h0000003C;
-//             op,  rm, shamt,    rn,  rd
-instrbusin[14] = {SUBS, R28, zeroSham, R25, R21};
+//                   oooooosssssdddddiiiiiiiiiiiiiiii
+instrbusin[14] = 32'b00000000000000000000000000000000;
 daddrbusout[14] = dontcare;
 databusin[14] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[14] = dontcare;
 
-//  op,   rd,  rn,  aluImm
-//* ADDIS,R22, R31, #000
+//* NOP
 iaddrbusout[15] = 32'h00000040;
-//            opcode rm/ALUImm    rn        rd...
-instrbusin[15] = {ADDIS, 12'h000, R31, R22};
+//                   oooooosssssdddddiiiiiiiiiiiiiiii
+instrbusin[15] = 32'b00000000000000000000000000000000;
 daddrbusout[15] = dontcare;
 databusin[15] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[15] = dontcare;
 
-//  op,   rd,  rn,  rm
-//* ADDS  R23, R20, R23
+//* NOP
 iaddrbusout[16] = 32'h00000044;
-//             op,  rm, shamt,    rn,  rd
-instrbusin[16] = {ADDS, R23, zeroSham, R20, R23};
+//                   oooooosssssdddddiiiiiiiiiiiiiiii
+instrbusin[16] = 32'b00000000000000000000000000000000;
 daddrbusout[16] = dontcare;
 databusin[16] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[16] = dontcare;
 
-//  op,   rd,  rn,  aluImm
-//* ANDIS,R24, R20, #002
+//* NOP
 iaddrbusout[17] = 32'h00000048;
-//            opcode rm/ALUImm    rn        rd...
-instrbusin[17] = {ANDIS, 12'h002, R20, R24};
+//                   oooooosssssdddddiiiiiiiiiiiiiiii
+instrbusin[17] = 32'b00000000000000000000000000000000;
 daddrbusout[17] = dontcare;
 databusin[17] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
 databusout[17] = dontcare;
 
-//  op,   rd,  rn,  rm
-//* ANDS, R25, R21, R20
-iaddrbusout[18] = 32'h00000048;
-//             op,  rm, shamt,    rn,  rd
-instrbusin[18] = {ANDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[18] = dontcare;
-
-//* NOP
-iaddrbusout[19] = 32'h00000048;
-//                   oooooosssssdddddiiiiiiiiiiiiiiii
-instrbusin[19] = 32'b00000000000000000000000000000000;
-daddrbusout[19] = dontcare;
-databusin[19] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[19] = dontcare;
-
-//* NOP
-iaddrbusout[20] = 32'h00000048;
-//                   oooooosssssdddddiiiiiiiiiiiiiiii
-instrbusin[20] = 32'b00000000000000000000000000000000;
-daddrbusout[20] = dontcare;
-databusin[20] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[20] = dontcare;
-
-//* NOP
-iaddrbusout[21] = 32'h00000048;
-//                   oooooosssssdddddiiiiiiiiiiiiiiii
-instrbusin[21] = 32'b00000000000000000000000000000000;
-daddrbusout[21] = dontcare;
-databusin[21] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[21] = dontcare;
-
-//* NOP
-iaddrbusout[22] = 32'h00000048;
-//                   oooooosssssdddddiiiiiiiiiiiiiiii
-instrbusin[22] = 32'b00000000000000000000000000000000;
-daddrbusout[22] = dontcare;
-databusin[22] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[22] = dontcare;
-
-//* NOP
-iaddrbusout[23] = 32'h00000048;
-//                   oooooosssssdddddiiiiiiiiiiiiiiii
-instrbusin[23] = 32'b00000000000000000000000000000000;
-daddrbusout[23] = dontcare;
-databusin[23] = 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz;
-databusout[23] = dontcare;
-
 
 //this number will be inacurate for a while(the number below)
 // (no. instructions) + (no. loads) + 2*(no. stores) = 35 + 2 + 2*7 = 51
-ntests = 24;//?
+ntests = 17;
 
 $timeformat(-9,1,"ns",12);
 
@@ -350,7 +282,7 @@ initial begin
   #5
   $display ("Time=%t\n  clk=%b", $realtime, clk);
 
-for (k=0; k<= 26; k=k+1) begin
+for (k=0; k<= 20; k=k+1) begin
     clk=1;
     $display ("Time=%t\n  clk=%b", $realtime, clk);
     #2

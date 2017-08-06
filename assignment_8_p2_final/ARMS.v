@@ -69,8 +69,13 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //imm select
   reg immBit1;//from IF_ID(ibusWire), to mux1 and ID_EX
   wire immBit2;//from ID_EX, to mux2
+  //LEG_UPDATE: add the NZVC bit and it's potential values
   //the NZVC bit
   wire [3:0]NZVC;
+  wire potentialNBit;
+  wire potentialZBit;
+  wire potentialVBit;
+  wire potentialCBit;
   //the control for setting NZVC
   reg NZVCSetBit;
   wire NZVCSetBitWire1;
@@ -399,15 +404,15 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //the wire that is used for the new dbusWire, adds a check for if the result needs to be the SLT or not
   //SLE_MUX_TEST
   assign dbusWire1_5 = (setControlBitsWire1 > 2'b00)? actualSLBit:dbusWire1;
-  //LEG_UPDATE: if the NZVCSetBit is set, then set the NZVC values
-  //N (negative)
-  assign NZVC[3] = (NZVCSetBitWire1 && (dbusWire1[31] == 1'b1))? 1'b1:1'bz;
-  //Z (zero)
-  assign NZVC[3] = (NZVCSetBitWire1&ZBit)? 1'b1:1'bz;
-  //V (overflow, signed)
-  assign NZVC[3] = (NZVCSetBitWire1&overflowWire)? 1'b1:1'bz;
-  //C (carry)
-  assign NZVC[3] = (NZVCSetBitWire1&ALUCoutWire)? 1'b1:1'bz;
+  //LEG_UPDATE: if the NZVCSetBit is set, then set the NZVC values with the potential values
+  assign potentialNBit = (dbusWire1[31] == 1'b1)? 1'b1:1'b0;
+  assign potentialZBit = (ZBit)? 1'b1:1'b0;
+  assign potentialVBit = (overflowWire)? 1'b1:1'b0;
+  assign potentialCBit = (ALUCoutWire)? 1'b1:1'b0;
+  assign NZVC[3] = (NZVCSetBitWire1)? potentialNBit:1'bz;//N (negative)
+  assign NZVC[2] = (NZVCSetBitWire1)? potentialZBit:1'bz;//Z (zero)
+  assign NZVC[1] = (NZVCSetBitWire1)? potentialVBit:1'bz;//V (overflow, signed)
+  assign NZVC[0] = (NZVCSetBitWire1)? potentialCBit:1'bz;//C (carry)
   //PIPELINE_2_END
   //latch for pipeline 3(EX_MEM)
   pipeline_3_latch EX_MEME (.clk(clk),.dbusWire1(dbusWire1),.DselectWire2(DselectWire2),.bbusWire2(bbusWire2),.lwSwFlag2(lwSwFlag2),.dbusWire2(dbusWire2),
