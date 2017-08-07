@@ -24,9 +24,9 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //for SLT/SLE operations
   //LEG_UPDATE: rs->rn, rt->rm
   wire ZBit;//high when rn(a) - rm(b) = 0, 1 otherwise
-  wire [31:0] potentialSLEBit;//the value to set to dbus if it is a SLE operation
-  wire [31:0] potentialSLTBit;
-  wire [31:0] actualSLBit;
+  wire [63:0] potentialSLEBit;//the value to set to dbus if it is a SLE operation
+  wire [63:0] potentialSLTBit;
+  wire [63:0] actualSLBit;
   //the cout for the alu
   wire ALUCoutWire;
   //LEG_UPDATE: add the overflow counter from the ALU
@@ -44,9 +44,9 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //program counter wires to be piped into the IF_ID stage
   wire [31:0] PCWire1;//form IF_ID, to branchCalcWire1
   //the wire for the branch calculation, part 1 (immediate sign extended, bit shifted by 2 for *4)
-  wire [31:0] branchCalcWire1;//from immediate, to branchCalcwire2
+  wire [63:0] branchCalcWire1;//from immediate, to branchCalcwire2
   //the wire for the branch calculation, part 2 (+4)
-  wire [31:0] branchCalcWire2;//from branchCalcWire1, to mux4
+  wire [63:0] branchCalcWire2;//from branchCalcWire1, to mux4
   //the new buses to and from the ddr memory
   output [31:0] daddrbus;//from EX_MEM, to SIM_OUT
   inout [31:0] databus;//from SIM_IN/EX_MEM, to SIM_OUT/MEM_WB
@@ -91,16 +91,16 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   reg [1:0] shiftBit1;
   wire [1:0] shiftBit2;
   //LEG_UPDATE: add the potential LSL and LSR bits for shifting
-  wire [31:0] potentialLSLResult;
-  wire [31:0] potentialLSRResult;
-  wire [31:0] actualLSResult;
+  wire [63:0] potentialLSLResult;
+  wire [63:0] potentialLSRResult;
+  wire [63:0] actualLSResult;
   //load word save word flag
   reg [1:0] lwSwFlag1;//from IF_ID, to ID_EX
   wire [1:0] lwSwFlag2;//from ID_EX, to EX_MEM
   wire [1:0] lwSwFlag3;//from EX_MEM, to MEM_WB
   wire [1:0] lwSwFlag4;//from MEM_WB, to mux3
   //Dselect
-  wire [31:0] DselectWire1;//from muxOut, to ID_EX
+  wire [63:0] DselectWire1;//from muxOut, to ID_EX
   //LEG_UPDATE: rd->rd (no change)
   wire [5:0] rd;//from ID_EX, to mux1
   wire [31:0] DselectWire2;//from ID_EX, to EX_MM
@@ -109,49 +109,49 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   wire [31:0] DselectWire4;//from mux3, to regfile
   //LEG_UPDATE: new rt is also rd
   //abus
-  //output [31:0] abus;//from ID_EX, to SIM_OUT
-  wire [31:0] abusWire1;//from regOut, to ID_EX
-  wire [31:0] abusWire2;//from ID_EX, to ALU
+  //output [63:0] abus;//from ID_EX, to SIM_OUT
+  wire [63:0] abusWire1;//from regOut, to ID_EX
+  wire [63:0] abusWire2;//from ID_EX, to ALU
   //bbus
-  //output [31:0] bbus;//from mux2Out, to SIM_OUT
-  wire [31:0] bbusWire1;//from regOut, to ID_EX
-  wire [31:0] bbusWire2;//from ID_EX, to mux2/EX_MEM
-  wire [31:0] bbusWire3;//from EX_MEM, to memory logic
-  wire [31:0] bbusWire3_5;//from memory logic, to MEM_WB
-  wire [31:0] bbusWire4;//from MEM_WB, to mux3
+  //output [63:0] bbus;//from mux2Out, to SIM_OUT
+  wire [63:0] bbusWire1;//from regOut, to ID_EX
+  wire [63:0] bbusWire2;//from ID_EX, to mux2/EX_MEM
+  wire [63:0] bbusWire3;//from EX_MEM, to memory logic
+  wire [63:0] bbusWire3_5;//from memory logic, to MEM_WB
+  wire [63:0] bbusWire4;//from MEM_WB, to mux3
   //dbus
-  wire [31:0] dbusWire1;//from ALU, to dbusWire1_5(SLE_MUX_TEST)
-  wire [31:0] dbusWire1_5;//from SLE_MUX_TEST to EX_MEM
-  wire [31:0] dbusWire1_6;
-  wire [31:0] dbusWire2;//from EM_MEM, to MEM_WB
-  wire [31:0] dbusWire3;//from MEM_WB, to mux3
+  wire [63:0] dbusWire1;//from ALU, to dbusWire1_5(SLE_MUX_TEST)
+  wire [63:0] dbusWire1_5;//from SLE_MUX_TEST to EX_MEM
+  wire [63:0] dbusWire1_6;
+  wire [63:0] dbusWire2;//from EM_MEM, to MEM_WB
+  wire [63:0] dbusWire3;//from MEM_WB, to mux3
   //mux3
-  wire [31:0] mux3Out;//from dbusWire3/bbusWire4, to regfile
+  wire [63:0] mux3Out;//from dbusWire3/bbusWire4, to regfile
   //mux2
-  wire [31:0] mux2Out;//from bbusWire2/immWire2, to mux5
+  wire [63:0] mux2Out;//from bbusWire2/immWire2, to mux5
   //LEG_UPDATE: mux5
-  wire [31:0] mux5;//from mux2Out/DTAddrWire2, to ALU (as b)
-  wire [31:0] mux6;
+  wire [63:0] mux5;//from mux2Out/DTAddrWire2, to ALU (as b)
+  wire [63:0] mux6;
   //mux4 deciding wire
   wire mux4Controller;//controls the pc address bus
   //LEG_UPDATE: remove sign extended IMM wire, it's not a thing
   //immediate
-  //wire [31:0] immWire1;//from IF_ID, to ID_EX
-  //wire [31:0] immWire2;//from ID_EX, to mux2
+  //wire [63:0] immWire1;//from IF_ID, to ID_EX
+  //wire [63:0] immWire2;//from ID_EX, to mux2
   //and add the new parsed wires
-  wire [31:0] ALUImmWire1;
-  wire [31:0] ALUImmWire2;
-  wire [31:0] BranchAddrWire1;
-  wire [31:0] CondBranchAddrType1Wire1;//for b.cond
-  wire [31:0] CondBranchAddrType2Wire1;//for CBZ/CBNZ
-  wire [31:0] MOVImmWire1;
-  wire [31:0] MOVImmWire2;
+  wire [63:0] ALUImmWire1;
+  wire [63:0] ALUImmWire2;
+  wire [63:0] BranchAddrWire1;
+  wire [63:0] CondBranchAddrType1Wire1;//for b.cond
+  wire [63:0] CondBranchAddrType2Wire1;//for CBZ/CBNZ
+  wire [63:0] MOVImmWire1;
+  wire [63:0] MOVImmWire2;
   wire [5:0] shamt;
   wire [5:0] shamtWire1;
-  wire [31:0] DTAddrWire1;
-  wire [31:0] DTAddrWire2;
-  wire [31:0] DTAddrWire3;
-  wire [31:0] DTAddrWire4;
+  wire [63:0] DTAddrWire1;
+  wire [63:0] DTAddrWire2;
+  wire [63:0] DTAddrWire3;
+  wire [63:0] DTAddrWire4;
   //S
   reg [2:0] SWire1;//from IF_ID, to ID_EX
   wire [2:0] SWire2;//from ID_EX, to ALU
@@ -192,15 +192,15 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   assign rm = ibusWire[20:16];//old rt
   assign rd = ibusWire[4:0];
   assign shamt = ibusWire[15:10];
-  assign DTAddrWire1 = ibusWire[20]? {23'b1,ibusWire[20:12]} : {23'b0,ibusWire[20:12]};
+  assign DTAddrWire1 = ibusWire[20]? {55'b1,ibusWire[20:12]} : {55'b0,ibusWire[20:12]};
   assign moveImmShftAmt = ibusWire[22:21] << 4;
   //LEG_UPDATE: added the following
   //64_BIT_TODO: all these
-  assign ALUImmWire1 = {20'b0, ibusWire[21:10]};
-  assign BranchAddrWire1 = ibusWire[25]? {4'b1111,ibusWire[25:0],2'b00} : {16'b0000,ibusWire[25:0],2'b00};
+  assign ALUImmWire1 = {52'b0, ibusWire[21:10]};
+  assign BranchAddrWire1 = ibusWire[25]? {36'b1111,ibusWire[25:0],2'b00} : {36'b0000,ibusWire[25:0],2'b00};
   //TODO: ask marpaung about CondBranchAddr
-  assign CondBranchAddrType1Wire1 = ibusWire[23]? {11'b11111111111,ibusWire[23:5],2'b00} : {11'b00000000000,ibusWire[23:5],2'b00};//b.cond
-  assign MOVImmWire1= {16'b0, ibusWire[20:5]};
+  assign CondBranchAddrType1Wire1 = ibusWire[23]? {43'b11111111111,ibusWire[23:5],2'b00} : {43'b00000000000,ibusWire[23:5],2'b00};//b.cond
+  assign MOVImmWire1= {48'b0, ibusWire[20:5]};
   //LEG_UPDATE: remove the following
   //assign immWire1 = ibusWire[15]? {16'b1111111111111111,ibusWire[15:0]} : {16'b0000000000000000,ibusWire[15:0]};
   //for the change in the opcode which is like always
@@ -455,8 +455,8 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //zero result flag
   assign ZBit = (dbusWire1==0)? 1:0;
   //potential values for if the instruction is for SLT or SLE
-  assign potentialSLTBit = (!ALUCoutWire && !ZBit)? 32'h00000001:32'h00000000;
-  assign potentialSLEBit = (!ALUCoutWire || ZBit)? 32'h00000001:32'h00000000;
+  assign potentialSLTBit = (!ALUCoutWire && !ZBit)? 64'h0000000000000001:64'h0000000000000000;
+  assign potentialSLEBit = (!ALUCoutWire || ZBit)? 64'h0000000000000001:64'h0000000000000000;
   //a determinate wire that uses SLT or SLE, assuming if not one, than the other
   //(a wire later decides if that always "lateer" choosen one is actually used
   //00 = nothing, 01 = SLT, 10 = SLE
@@ -474,7 +474,7 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //LEG_UPDATE: apply the mov command to dbus
   assign dbusWire1_6 = (movBit2)? {dbusWire1_5 << moveImmShftAmtWire1}: dbusWire1_5;
   //LEG_UPDATE: if the NZVCSetBit is set, then set the NZVC values with the potential values
-  assign potentialNBit = (dbusWire1[31] == 1'b1)? 1'b1:1'b0;
+  assign potentialNBit = (dbusWire1[63] == 1'b1)? 1'b1:1'b0;
   assign potentialZBit = (ZBit)? 1'b1:1'b0;
   assign potentialVBit = (overflowWire)? 1'b1:1'b0;
   assign potentialCBit = (ALUCoutWire)? 1'b1:1'b0;
@@ -540,7 +540,8 @@ abusWire2,bbusWire2,ALUImmWire2,SWire2,CinWire2,DselectWire2,immBit2,lwSwFlag2,s
 branchControlBit,branchControlBitWire1,NZVCSetBit,NZVCSetBitWire1,shiftBit1,shiftBit2,shamt,shamtWire1,DTAddrWire1,
 DTAddrWire2,MOVImmWire1,MOVImmWire2,movBit1,movBit2,moveImmShftAmt,moveImmShftAmtWire1);
   input clk, CinWire1,immBit1;
-  input [31:0] abusWire1, bbusWire1, DselectWire1, ALUImmWire1,DTAddrWire1,MOVImmWire1;
+  input [63:0] abusWire1, bbusWire1, ALUImmWire1,DTAddrWire1,MOVImmWire1;
+  input [31:0] DselectWire1;
   input [2:0] SWire1;
   input [1:0] lwSwFlag1;
   input [1:0] setControlBits;
@@ -550,7 +551,8 @@ DTAddrWire2,MOVImmWire1,MOVImmWire2,movBit1,movBit2,moveImmShftAmt,moveImmShftAm
   input [5:0] shamt,moveImmShftAmt;
   input movBit1;
   output CinWire2,immBit2;
-  output [31:0] abusWire2, bbusWire2, DselectWire2, ALUImmWire2,DTAddrWire2,MOVImmWire2;
+  output [63:0] abusWire2, bbusWire2, ALUImmWire2,DTAddrWire2,MOVImmWire2;
+  output [31:0] DselectWire2;
   output [2:0] SWire2;
   output [1:0] lwSwFlag2;
   output [1:0] setControlBitsWire1;
@@ -560,7 +562,8 @@ DTAddrWire2,MOVImmWire1,MOVImmWire2,movBit1,movBit2,moveImmShftAmt,moveImmShftAm
   output [5:0] shamtWire1,moveImmShftAmtWire1;
   output movBit2;
   reg CinWire2,immBit2;
-  reg [31:0] abusWire2, bbusWire2, DselectWire2, ALUImmWire2,DTAddrWire2,MOVImmWire2;
+  reg [63:0] abusWire2, bbusWire2, ALUImmWire2,DTAddrWire2,MOVImmWire2;
+  reg [31:0] DselectWire2;
   reg [2:0] SWire2;
   reg [1:0] lwSwFlag2;
   reg [1:0] setControlBitsWire1;
@@ -592,13 +595,16 @@ endmodule
 //phase 3 pipeliune latch(EX_MEM)
 module pipeline_3_latch(clk, dbusWire1, DselectWire2, bbusWire2, lwSwFlag2, dbusWire2, DselectWire3,bbusWire3,lwSwFlag3,branchControlBitWire1,branchControlBitWire2);
   input clk;
-  input [31:0] dbusWire1, DselectWire2, bbusWire2;
+  input [63:0] dbusWire1, bbusWire2;
+  input [31:0] DselectWire2;
   input [1:0] lwSwFlag2;
   input [2:0] branchControlBitWire1;
-  output [31:0] dbusWire2, DselectWire3, bbusWire3;
+  output [63:0] dbusWire2, bbusWire3;
+  output [31:0] DselectWire3;
   output [1:0] lwSwFlag3;
   output [2:0] branchControlBitWire2;
-  reg [31:0] dbusWire2, DselectWire3, bbusWire3;
+  reg [63:0] dbusWire2, bbusWire3;
+  reg [31:0] DselectWire3;
   reg [1:0] lwSwFlag3;
   reg [2:0] branchControlBitWire2;
   always @(posedge clk) begin
@@ -612,13 +618,16 @@ endmodule
 //phase 4 pipeline latch(MEM_WB)
 module pipeline_4_latch(clk, dbusWire2, DselectWire3, bbusWire3, lwSwFlag3, dbusWire3, DselectWire4,bbusWire4,lwSwFlag4,branchControlBitWire2,branchControlBitWire3);
   input clk;
-  input [31:0] dbusWire2, DselectWire3, bbusWire3;
+  input [63:0] dbusWire2, bbusWire3;
+  input [31:0] DselectWire3;
   input [1:0] lwSwFlag3;
   input [2:0] branchControlBitWire2;
-  output [31:0] dbusWire3, DselectWire4, bbusWire4;
+  output [63:0] dbusWire3, bbusWire4;
+  output [31:0] DselectWire4;
   output [1:0] lwSwFlag4;
   output [2:0] branchControlBitWire3;
-  reg [31:0] dbusWire3, DselectWire4, bbusWire4;
+  reg [63:0] dbusWire3, bbusWire4;
+  reg [31:0] DselectWire4;
   reg [1:0] lwSwFlag4;
   reg [2:0] branchControlBitWire3;
   always @(posedge clk) begin
@@ -632,11 +641,11 @@ endmodule
 
 module regfile(
   input [31:0] Aselect,//select the register index to read from to store into abus
-  input [31:0] Bselect,//select the register index to read from to store into bbus
-  input [31:0] Dselect,//select the register to write to from dbus
-  input [31:0] dbus,//data in
-  output [31:0] abus,//data out
-  output [31:0] bbus,//data out
+  input [63:0] Bselect,//select the register index to read from to store into bbus
+  input [63:0] Dselect,//select the register to write to from dbus
+  input [63:0] dbus,//data in
+  output [63:0] abus,//data out
+  output [63:0] bbus,//data out
   input clk
   );
   assign abus = Aselect[31] ? 32'b0 : 32'bz;
@@ -653,19 +662,19 @@ module regfile(
   endmodule
 
 module DNegflipFlop(dbus, abus, Dselect, Bselect, Aselect, bbus, clk);
-  input [31:0] dbus;
+  input [63:0] dbus;
   input Dselect;//the select write bit for this register
   input Bselect;//the select read bit for this register
   input Aselect;
   input clk;
-  output [31:0] abus;
-  output [31:0] bbus;
+  output [63:0] abus;
+  output [63:0] bbus;
   wire wireclk;
-  reg [31:0] data;
+  reg [63:0] data;
   
   assign wireclk = clk & Dselect;
   initial begin
-  data = 32'h00000000;
+  data = 64'h0000000000000000;
   end
   
   always @(negedge clk) begin
@@ -673,8 +682,8 @@ module DNegflipFlop(dbus, abus, Dselect, Bselect, Aselect, bbus, clk);
       data = dbus;
     end
   end
-  assign abus = Aselect? data : 32'hzzzzzzzz;
-  assign bbus = Bselect? data : 32'hzzzzzzzz;
+  assign abus = Aselect? data : 64'hzzzzzzzzzzzzzzzz;
+  assign bbus = Bselect? data : 64'hzzzzzzzzzzzzzzzz;
 endmodule
 //Below this point is code from assignment 1//
 
