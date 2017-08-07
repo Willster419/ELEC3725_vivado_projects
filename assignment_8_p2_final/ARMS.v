@@ -195,10 +195,8 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   assign DTAddrWire1 = ibusWire[20]? {55'b1,ibusWire[20:12]} : {55'b0,ibusWire[20:12]};
   assign moveImmShftAmt = ibusWire[22:21] << 4;
   //LEG_UPDATE: added the following
-  //64_BIT_TODO: all these
   assign ALUImmWire1 = {52'b0, ibusWire[21:10]};
   assign BranchAddrWire1 = ibusWire[25]? {36'b1111,ibusWire[25:0],2'b00} : {36'b0000,ibusWire[25:0],2'b00};
-  //TODO: ask marpaung about CondBranchAddr
   assign CondBranchAddrType1Wire1 = ibusWire[23]? {43'b11111111111,ibusWire[23:5],2'b00} : {43'b00000000000,ibusWire[23:5],2'b00};//b.cond
   assign MOVImmWire1= {48'b0, ibusWire[20:5]};
   //LEG_UPDATE: remove the following
@@ -466,7 +464,7 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //LEG_UPDATE: hook into the SLE wire for the LSL-LSR commands
   //assign dbusWire1_5 = (setControlBitsWire1 > 2'b00)? actualSLBit:dbusWire1;
   assign potentialLSLResult = dbusWire1 << shamtWire1;
-  assign potentialLSRResult = dbusWire1 >> shamtWire1;
+  assign potentialLSRResult = dbusWire1 >>> shamtWire1;
   //assumes LSR if not LSL. won't apply it to dbus unless it's actually a shift command
   //2'b01 = LSL, 2'b10 = LSR
   assign actualLSResult = (shiftBit2 == 2'b10)? potentialLSRResult:potentialLSLResult;
