@@ -1,9 +1,9 @@
 /************************
 *  Willard Wider
-*  08-04-17
+*  08-07-17
 *  ELEC3725
 *  ARMS.v
-*  building a 32 bit CPU
+*  building a 64 bit CPU
 ************************/
 //ARMS dut(.reset(reset),.clk(clk),.iaddrbus(iaddrbus),.ibus(instrbus),.daddrbus(daddrbus),.databus(databus));
 module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
@@ -56,8 +56,8 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //LEG_UPDATE: funktion is no longer a thing, everything is in the opcode
   //wire [5:0] funktion;//from IF_ID
   //ibus
-  input [63:0] ibus;//in for IF_ID
-  wire [63:0] ibusWire;//out for IF_ID
+  input [31:0] ibus;//in for IF_ID
+  wire [31:0] ibusWire;//out for IF_ID
   //Aselect
   wire [31:0] AselectWire;//from rs, to regfile
   //LEG_UPDATE: rs->rn
@@ -522,10 +522,10 @@ module pipeline_0_latch(clk, iaddrbusWire1, iaddrbusOut, reset);
 endmodule
 //phase 1 pipeline latch(IF_ID)
 module pipeline_1_latch(clk, ibus, ibusWire, PCIn, PCOut);
-  input [63:0] ibus, PCIn;
+  input [31:0] ibus, PCIn;
   input clk;
-  output [63:0] ibusWire, PCOut;
-  reg [63:0] ibusWire, PCOut;
+  output [31:0] ibusWire, PCOut;
+  reg [31:0] ibusWire, PCOut;
   always @(posedge clk) begin
     //EDIT: this is delayed branching, other instructions can be put in place
     ibusWire = ibus;
