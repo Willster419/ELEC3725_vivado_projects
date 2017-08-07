@@ -449,8 +449,8 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   assign mux5 = (lwSwFlag2 > 2'b00)? DTAddrWire2:mux2Out;
   assign mux6 = (movBit2)? MOVImmWire2:mux5;
   //make the ALU
-  //module alu32 (d, Cout, V, a, b, Cin, S);
-  alu32 literallyLogic(.d(dbusWire1),.a(abusWire2),.b(mux6),.Cin(CinWire2),.S(SWire2),.Cout(ALUCoutWire),.V(overflowWire));
+  //module alu64 (d, Cout, V, a, b, Cin, S);
+  alu64 literallyLogic(.d(dbusWire1),.a(abusWire2),.b(mux6),.Cin(CinWire2),.S(SWire2),.Cout(ALUCoutWire),.V(overflowWire));
   //wipe the dbus if it's an SLT or an SLE
   //zero result flag
   assign ZBit = (dbusWire1==0)? 1:0;
@@ -688,18 +688,18 @@ endmodule
 //Below this point is code from assignment 1//
 
 //The declaration of the entire ALU itself.
-module alu32 (d, Cout, V, a, b, Cin, S);
-  output[31:0] d;//the output bus
+module alu64 (d, Cout, V, a, b, Cin, S);
+  output[63:0] d;//the output bus
   output Cout, V;//Cout is the bit for it it needs to carry over ?/ V is the overflow bit.
-  input [31:0] a, b;//the two input buses
+  input [63:0] a, b;//the two input buses
   input Cin;//the bit for marking if it is carrying over from a ?
   input [2:0] S;//The select bus. It defines the operation to do with input busses a and b
   
-  wire [31:0] c, g, p;
+  wire [63:0] c, g, p;
   wire gout, pout;
   
   //The core ALU bus
-  alu_cell mycell[31:0] (
+  alu_cell mycell[63:0] (
      .d(d),
      .g(g),
      .p(p),
@@ -710,7 +710,7 @@ module alu32 (d, Cout, V, a, b, Cin, S);
   );
   
   //the top Look-Ahead-Carry module.
-  lac5 lac(
+  lac6 lac(
      .c(c),
      .gout(gout),
      .pout(pout),
@@ -725,7 +725,7 @@ module alu32 (d, Cout, V, a, b, Cin, S);
      .V(V),
      .g(gout),
      .p(pout),
-     .c31(c[31]),
+     .c31(c[63]),
      .Cin(Cin)
   );
 endmodule
@@ -901,7 +901,7 @@ module lac4 (c, gout, pout, Cin, g, p);
   );
 endmodule
 
-//Look-Ahead Carry unit level 1. Caontains LACs for the root and level 4. Used in the core alu32 module
+//Look-Ahead Carry unit level 5. Contains LACs for the root and level 3. Used in level 6
 module lac5 (c, gout, pout, Cin, g, p);
   output [31:0] c;
   output gout, pout;
@@ -926,6 +926,43 @@ module lac5 (c, gout, pout, Cin, g, p);
       .Cin(cint[1]),
       .g(g[31:16]),
       .p(p[31:16])
+  );
+  
+  lac root(
+     .c(cint),
+     .gout(gout),
+     .pout(pout),
+     .Cin(Cin),
+     .g(gint),
+     .p(pint)
+  );
+endmodule
+
+//Look-Ahead Carry unit level 6. Caontains LACs for the root and level 5. Used in the core alu64 module
+module lac6 (c, gout, pout, Cin, g, p);
+  output [63:0] c;
+  output gout, pout;
+  input Cin;
+  input [63:0] g, p;
+  
+  wire [1:0] cint, gint, pint;
+  
+  lac5 leaf0(
+      .c(c[31:0]),
+      .gout(gint[0]),
+      .pout(pint[0]),
+      .Cin(cint[0]),
+      .g(g[31:0]),
+      .p(p[31:0])
+  );
+  
+  lac5 leaf1(
+      .c(c[63:32]),
+      .gout(gint[1]),
+      .pout(pint[1]),
+      .Cin(cint[1]),
+      .g(g[63:32]),
+      .p(p[63:32])
   );
   
   lac root(
