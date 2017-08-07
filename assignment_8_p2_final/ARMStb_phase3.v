@@ -2,15 +2,15 @@
 module ARMStb();
 
 reg  [31:0] instrbus;
-reg  [31:0] instrbusin[0:28];
+reg  [31:0] instrbusin[0:29];
 wire [63:0] iaddrbus, daddrbus;
-reg  [63:0] iaddrbusout[0:28], daddrbusout[0:28];
+reg  [63:0] iaddrbusout[0:29], daddrbusout[0:29];
 wire [63:0] databus;
-reg  [63:0] databusk, databusin[0:28], databusout[0:28];
+reg  [63:0] databusk, databusin[0:29], databusout[0:29];
 reg         clk, reset;
 reg         clkd;
 reg [63:0] dontcare;
-reg [24*8:1] iname[0:28];
+reg [24*8:1] iname[0:29];
 integer error, k, ntests;
 
 //all   opcode parameters to be used
@@ -669,27 +669,27 @@ daddrbusout[27] = dontcare;
 databusin[27]   = 64'bz;
 databusout[27]  = dontcare;
 
-iname[27] =    "NOP";//nada
-iaddrbusout[27] = 64'h00000070;
-//
-instrbusin[27]  = 64'b0;
-daddrbusout[27] = dontcare;
-databusin[27]   = 64'bz;
-databusout[27]  = dontcare;
-
 iname[28] =    "NOP";//nada
-iaddrbusout[28] = 64'h00000074;
+iaddrbusout[28] = 64'h00000070;
 //
 instrbusin[28]  = 64'b0;
 daddrbusout[28] = dontcare;
 databusin[28]   = 64'bz;
 databusout[28]  = dontcare;
 
+iname[29] =    "NOP";//nada
+iaddrbusout[29] = 64'h00000074;
+//
+instrbusin[29]  = 64'b0;
+daddrbusout[29] = dontcare;
+databusin[29]   = 64'bz;
+databusout[29]  = dontcare;
+
 
 //this number will be inacurate for a while(the number below)
 //also remember to set k down below to ntests - 1
 // (no. instructions) + (no. loads) + 2*(no. stores) = 35 + 2 + 2*7 = 51
-ntests = 29;//?
+ntests = 30;//?
 
 $timeformat(-9,1,"ns",12);
 
@@ -727,7 +727,7 @@ initial begin
   #5
   $display ("Time=%t\n  clk=%b", $realtime, clk);
 
-for (k=0; k<= 28; k=k+1) begin
+for (k=0; k<= 29; k=k+1) begin
     clk=1;
     $display ("Time=%t\n  clk=%b", $realtime, clk);
     #2
