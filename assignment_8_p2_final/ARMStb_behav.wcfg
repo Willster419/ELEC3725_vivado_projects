@@ -11,22 +11,22 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="35901696fs"></ZoomEndTime>
-      <Cursor1Time time="500000000fs"></Cursor1Time>
+      <ZoomStartTime time="182020000fs"></ZoomStartTime>
+      <ZoomEndTime time="217921696fs"></ZoomEndTime>
+      <Cursor1Time time="195000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="175"></NameColumnWidth>
       <ValueColumnWidth column_width="126"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="35" />
+   <WVObjectSize size="44" />
    <wvobject fp_name="/ARMStb/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/ibusWire" type="array">
-      <obj_property name="ElementShortName">ibusWire[31:0]</obj_property>
-      <obj_property name="ObjectShortName">ibusWire[31:0]</obj_property>
+      <obj_property name="ElementShortName">ibusWire[63:0]</obj_property>
+      <obj_property name="ObjectShortName">ibusWire[63:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/opCode" type="array">
       <obj_property name="ElementShortName">opCode[10:0]</obj_property>
@@ -54,8 +54,8 @@
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/ALUImmWire1" type="array">
-      <obj_property name="ElementShortName">ALUImmWire1[31:0]</obj_property>
-      <obj_property name="ObjectShortName">ALUImmWire1[31:0]</obj_property>
+      <obj_property name="ElementShortName">ALUImmWire1[63:0]</obj_property>
+      <obj_property name="ObjectShortName">ALUImmWire1[63:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/SWire1" type="array">
       <obj_property name="ElementShortName">SWire1[2:0]</obj_property>
@@ -71,8 +71,8 @@
       <obj_property name="ObjectShortName">immBit2</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/ALUImmWire2" type="array">
-      <obj_property name="ElementShortName">ALUImmWire2[31:0]</obj_property>
-      <obj_property name="ObjectShortName">ALUImmWire2[31:0]</obj_property>
+      <obj_property name="ElementShortName">ALUImmWire2[63:0]</obj_property>
+      <obj_property name="ObjectShortName">ALUImmWire2[63:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/AselectWire" type="array">
       <obj_property name="ElementShortName">AselectWire[31:0]</obj_property>
@@ -80,9 +80,45 @@
       <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/abusWire1" type="array">
-      <obj_property name="ElementShortName">abusWire1[31:0]</obj_property>
-      <obj_property name="ObjectShortName">abusWire1[31:0]</obj_property>
+      <obj_property name="ElementShortName">abusWire1[63:0]</obj_property>
+      <obj_property name="ObjectShortName">abusWire1[63:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/\myFlips[20] /dbus" type="array">
+      <obj_property name="ElementShortName">dbus[63:0]</obj_property>
+      <obj_property name="ObjectShortName">dbus[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/\myFlips[20] /Dselect" type="logic">
+      <obj_property name="ElementShortName">Dselect</obj_property>
+      <obj_property name="ObjectShortName">Dselect</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/\myFlips[20] /Bselect" type="logic">
+      <obj_property name="ElementShortName">Bselect</obj_property>
+      <obj_property name="ObjectShortName">Bselect</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/\myFlips[20] /Aselect" type="logic">
+      <obj_property name="ElementShortName">Aselect</obj_property>
+      <obj_property name="ObjectShortName">Aselect</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/\myFlips[20] /clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/\myFlips[20] /abus" type="array">
+      <obj_property name="ElementShortName">abus[63:0]</obj_property>
+      <obj_property name="ObjectShortName">abus[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/\myFlips[20] /bbus" type="array">
+      <obj_property name="ElementShortName">bbus[63:0]</obj_property>
+      <obj_property name="ObjectShortName">bbus[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/\myFlips[20] /wireclk" type="logic">
+      <obj_property name="ElementShortName">wireclk</obj_property>
+      <obj_property name="ObjectShortName">wireclk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/\myFlips[20] /data" type="array">
+      <obj_property name="ElementShortName">data[63:0]</obj_property>
+      <obj_property name="ObjectShortName">data[63:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/SWire1" type="array">
       <obj_property name="ElementShortName">SWire1[2:0]</obj_property>
@@ -94,8 +130,8 @@
       <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/bbusWire1" type="array">
-      <obj_property name="ElementShortName">bbusWire1[31:0]</obj_property>
-      <obj_property name="ObjectShortName">bbusWire1[31:0]</obj_property>
+      <obj_property name="ElementShortName">bbusWire1[63:0]</obj_property>
+      <obj_property name="ObjectShortName">bbusWire1[63:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/DselectWire1" type="array">
@@ -108,18 +144,18 @@
       <obj_property name="ObjectShortName">NZVCSetBit</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/abusWire2" type="array">
-      <obj_property name="ElementShortName">abusWire2[31:0]</obj_property>
-      <obj_property name="ObjectShortName">abusWire2[31:0]</obj_property>
+      <obj_property name="ElementShortName">abusWire2[63:0]</obj_property>
+      <obj_property name="ObjectShortName">abusWire2[63:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/bbusWire2" type="array">
-      <obj_property name="ElementShortName">bbusWire2[31:0]</obj_property>
-      <obj_property name="ObjectShortName">bbusWire2[31:0]</obj_property>
+      <obj_property name="ElementShortName">bbusWire2[63:0]</obj_property>
+      <obj_property name="ObjectShortName">bbusWire2[63:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/mux2Out" type="array">
-      <obj_property name="ElementShortName">mux2Out[31:0]</obj_property>
-      <obj_property name="ObjectShortName">mux2Out[31:0]</obj_property>
+      <obj_property name="ElementShortName">mux2Out[63:0]</obj_property>
+      <obj_property name="ObjectShortName">mux2Out[63:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/SWire2" type="array">
       <obj_property name="ElementShortName">SWire2[2:0]</obj_property>
@@ -132,8 +168,8 @@
       <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/dbusWire1" type="array">
-      <obj_property name="ElementShortName">dbusWire1[31:0]</obj_property>
-      <obj_property name="ObjectShortName">dbusWire1[31:0]</obj_property>
+      <obj_property name="ElementShortName">dbusWire1[63:0]</obj_property>
+      <obj_property name="ObjectShortName">dbusWire1[63:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/NZVCSetBitWire1" type="logic">
@@ -144,20 +180,21 @@
       <obj_property name="ElementShortName">NZVC[3:0]</obj_property>
       <obj_property name="ObjectShortName">NZVC[3:0]</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="isExpanded"></obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/dbusWire2" type="array">
-      <obj_property name="ElementShortName">dbusWire2[31:0]</obj_property>
-      <obj_property name="ObjectShortName">dbusWire2[31:0]</obj_property>
+      <obj_property name="ElementShortName">dbusWire2[63:0]</obj_property>
+      <obj_property name="ObjectShortName">dbusWire2[63:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/bbusWire3" type="array">
-      <obj_property name="ElementShortName">bbusWire3[31:0]</obj_property>
-      <obj_property name="ObjectShortName">bbusWire3[31:0]</obj_property>
+      <obj_property name="ElementShortName">bbusWire3[63:0]</obj_property>
+      <obj_property name="ObjectShortName">bbusWire3[63:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/bbusWire3_5" type="array">
-      <obj_property name="ElementShortName">bbusWire3_5[31:0]</obj_property>
-      <obj_property name="ObjectShortName">bbusWire3_5[31:0]</obj_property>
+      <obj_property name="ElementShortName">bbusWire3_5[63:0]</obj_property>
+      <obj_property name="ObjectShortName">bbusWire3_5[63:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/DselectWire3" type="array">
@@ -166,13 +203,13 @@
       <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/bbusWire4" type="array">
-      <obj_property name="ElementShortName">bbusWire4[31:0]</obj_property>
-      <obj_property name="ObjectShortName">bbusWire4[31:0]</obj_property>
+      <obj_property name="ElementShortName">bbusWire4[63:0]</obj_property>
+      <obj_property name="ObjectShortName">bbusWire4[63:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/dbusWire3" type="array">
-      <obj_property name="ElementShortName">dbusWire3[31:0]</obj_property>
-      <obj_property name="ObjectShortName">dbusWire3[31:0]</obj_property>
+      <obj_property name="ElementShortName">dbusWire3[63:0]</obj_property>
+      <obj_property name="ObjectShortName">dbusWire3[63:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/DselectWire3_5" type="array">

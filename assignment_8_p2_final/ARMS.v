@@ -12,10 +12,10 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //reset to clear the counter
   input reset;
   //instruction bus
-  output [31:0] iaddrbus;//from PC, to SIM_OUT
-  wire [31:0] iaddrbusWire1;//from mux, to PC
-  wire [31:0] iaddrbusWire2;//from PC, to mux4/iaddrbusWire4
-  wire [31:0] iaddrbusWire4;//from PC, to IF_ID
+  output [63:0] iaddrbus;//from PC, to SIM_OUT
+  wire [63:0] iaddrbusWire1;//from mux, to PC
+  wire [63:0] iaddrbusWire2;//from PC, to mux4/iaddrbusWire4
+  wire [63:0] iaddrbusWire4;//from PC, to IF_ID
   //SLT SLE control bits
   //00 = nothing, 01 = SLT, 10 = SLE
   reg [1:0] setControlBits;
@@ -42,22 +42,22 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   reg takeBranch;
   wire takeBranchWire1;
   //program counter wires to be piped into the IF_ID stage
-  wire [31:0] PCWire1;//form IF_ID, to branchCalcWire1
+  wire [63:0] PCWire1;//form IF_ID, to branchCalcWire1
   //the wire for the branch calculation, part 1 (immediate sign extended, bit shifted by 2 for *4)
   wire [63:0] branchCalcWire1;//from immediate, to branchCalcwire2
   //the wire for the branch calculation, part 2 (+4)
   wire [63:0] branchCalcWire2;//from branchCalcWire1, to mux4
   //the new buses to and from the ddr memory
-  output [31:0] daddrbus;//from EX_MEM, to SIM_OUT
-  inout [31:0] databus;//from SIM_IN/EX_MEM, to SIM_OUT/MEM_WB
+  output [63:0] daddrbus;//from EX_MEM, to SIM_OUT
+  inout [63:0] databus;//from SIM_IN/EX_MEM, to SIM_OUT/MEM_WB
   //decoder tings
   //LEG_UPDATE: opcode is 11 bits long now
   wire [10:0] opCode;//from IF_ID
   //LEG_UPDATE: funktion is no longer a thing, everything is in the opcode
   //wire [5:0] funktion;//from IF_ID
   //ibus
-  input [31:0] ibus;//in for IF_ID
-  wire [31:0] ibusWire;//out for IF_ID
+  input [63:0] ibus;//in for IF_ID
+  wire [63:0] ibusWire;//out for IF_ID
   //Aselect
   wire [31:0] AselectWire;//from rs, to regfile
   //LEG_UPDATE: rs->rn
@@ -100,7 +100,7 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   wire [1:0] lwSwFlag3;//from EX_MEM, to MEM_WB
   wire [1:0] lwSwFlag4;//from MEM_WB, to mux3
   //Dselect
-  wire [63:0] DselectWire1;//from muxOut, to ID_EX
+  wire [31:0] DselectWire1;//from muxOut, to ID_EX
   //LEG_UPDATE: rd->rd (no change)
   wire [5:0] rd;//from ID_EX, to mux1
   wire [31:0] DselectWire2;//from ID_EX, to EX_MM
@@ -508,9 +508,9 @@ endmodule
 //phase 0 pipeline latch (PC)
 module pipeline_0_latch(clk, iaddrbusWire1, iaddrbusOut, reset);
   input clk, reset;
-  input [31:0] iaddrbusWire1;
-  output [31:0] iaddrbusOut;
-  reg [31:0] iaddrbusOut;
+  input [63:0] iaddrbusWire1;
+  output [63:0] iaddrbusOut;
+  reg [63:0] iaddrbusOut;
   reg startBit;
   initial begin
   startBit = 1;
@@ -524,10 +524,10 @@ module pipeline_0_latch(clk, iaddrbusWire1, iaddrbusOut, reset);
 endmodule
 //phase 1 pipeline latch(IF_ID)
 module pipeline_1_latch(clk, ibus, ibusWire, PCIn, PCOut);
-  input [31:0] ibus, PCIn;
+  input [63:0] ibus, PCIn;
   input clk;
-  output [31:0] ibusWire, PCOut;
-  reg [31:0] ibusWire, PCOut;
+  output [63:0] ibusWire, PCOut;
+  reg [63:0] ibusWire, PCOut;
   always @(posedge clk) begin
     //EDIT: this is delayed branching, other instructions can be put in place
     ibusWire = ibus;
@@ -641,15 +641,15 @@ endmodule
 
 module regfile(
   input [31:0] Aselect,//select the register index to read from to store into abus
-  input [63:0] Bselect,//select the register index to read from to store into bbus
-  input [63:0] Dselect,//select the register to write to from dbus
+  input [31:0] Bselect,//select the register index to read from to store into bbus
+  input [31:0] Dselect,//select the register to write to from dbus
   input [63:0] dbus,//data in
   output [63:0] abus,//data out
   output [63:0] bbus,//data out
   input clk
   );
-  assign abus = Aselect[31] ? 32'b0 : 32'bz;
-  assign bbus = Bselect[31] ? 32'b0 : 32'bz;
+  assign abus = Aselect[31] ? 64'b0 : 64'bz;
+  assign bbus = Bselect[31] ? 64'b0 : 64'bz;
   DNegflipFlop myFlips[30:0](//32 wide register
       .dbus(dbus),
       .abus(abus),
