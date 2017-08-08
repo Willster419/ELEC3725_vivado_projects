@@ -2,15 +2,15 @@
 module ARMStb();
 
 reg  [31:0] instrbus;
-reg  [31:0] instrbusin[0:87];
+reg  [31:0] instrbusin[0:156];
 wire [63:0] iaddrbus, daddrbus;
-reg  [63:0] iaddrbusout[0:87], daddrbusout[0:87];
+reg  [63:0] iaddrbusout[0:156], daddrbusout[0:156];
 wire [63:0] databus;
-reg  [63:0] databusk, databusin[0:87], databusout[0:87];
+reg  [63:0] databusk, databusin[0:156], databusout[0:156];
 reg         clk, reset;
 reg         clkd;
 reg [63:0] dontcare;
-reg [24*8:1] iname[0:87];
+reg [24*8:1] iname[0:156];
 integer error, k, ntests;
 
 //all opcode parameters to be used
@@ -66,10 +66,11 @@ parameter R31 = 5'b11111;
 //other parameterz to be used
 parameter zeroSham   = 6'b000000;
 parameter RX         = 5'b11111;
-parameter oneShamt   = 6'b000001;
+parameter oneShamt   = 6'b000001;//shifts 1 bit
 parameter twoShamt   = 6'b000010;
 parameter threeShamt = 6'b000011;
-parameter eightShamt = 6'b001000;
+parameter fourShamt  = 6'b000100;//moves 1 hex place
+parameter eightShamt = 6'b001000;//moves 2 hex place
 parameter move_0     = 2'b00;
 parameter move_1     = 2'b01;
 parameter move_2     = 2'b10;
@@ -294,8 +295,8 @@ daddrbusout[22] = dontcare;
 databusin[22]   = 64'bz;
 databusout[22]  = dontcare;
 
-//                op,  rd,  rn,  rm
-iname[23]       ="LSL, R20, R20, 2";//testing left shift, result in R20 = 0000000000000700
+//                op,  rd,  rn,  shamt
+iname[23]       ="LSL, R20, R20, #2";//testing left shift, result in R20 = 0000000000000700
 iaddrbusout[23] = 64'h0000005C;
 //                op,  rm, shamt,      rn,  rd
 instrbusin[23]  ={LSL, RX, eightShamt, R20, R20};
@@ -303,8 +304,8 @@ daddrbusout[23] = dontcare;
 databusin[23]   = 64'bz;
 databusout[23]  = dontcare;
 
-//                op,  rd,  rn,  rm
-iname[24]       ="LSR, R21, R21, 2";//testing right shift, result in R21 = 0000000000000007
+//                op,  rd,  rn,  shamt
+iname[24]       ="LSR, R21, R21, #2";//testing right shift, result in R21 = 0000000000000007
 iaddrbusout[24] = 64'h00000060;
 //                op,  rm, shamt,      rn,  rd
 instrbusin[24]  ={LSR, RX, eightShamt, R21, R21};
@@ -449,7 +450,7 @@ databusout[38]  = dontcare;
 
 //real branch for B.EQ (I have the best branches)
 //                op,   COND_addr,  rt
-iname[39]       ="B_EQ, #69,        RX";//take the branch to instruction count ?
+iname[39]       ="B_EQ, #69,        RX";//take the branch to instruction count 440
 iaddrbusout[39] = 64'h0000043C;
 //                op,   COND_addr,               rt
 instrbusin[39]  ={B_EQ, 19'b0000000000001101001, RX};
@@ -873,11 +874,645 @@ daddrbusout[87] = dontcare;
 databusin[87]   = 64'bz;
 databusout[87]  = dontcare;
 
+//done with testing: 88 instructions
+//bonus round
+//copy of phase 3
+
+//phase 3: testing LSL, LSR
+//setting up the register R20 for a test of the LSL
+//                op,   rd,  rn,  rm
+iname[88]       ="ADDI, R20, R31, #640";//setting up for left shift, result in R20 = 0000000000000640
+iaddrbusout[88] = 64'h00000B70;
+//                opcode rm/ALUImm rn   rd
+instrbusin[88]  ={ADDI,  12'h007,  R31, R20};
+daddrbusout[88] = dontcare;
+databusin[88]   = 64'bz;
+databusout[88]  = dontcare;
+
+//                op,   rd,  rn,  rm
+iname[89]       ="ADDI, R21, R31, #480";//setting up for right shift, n flag, result in R21 = 0000000000000480
+iaddrbusout[89] = 64'h00000B74;
+//                opcode rm/ALUImm rn   rd
+instrbusin[89]  ={ADDI,  12'h700,  R31, R21};
+daddrbusout[89] = dontcare;
+databusin[89]   = 64'bz;
+databusout[89]  = dontcare;
+
+//                op,   rd,  rn,  rm
+iname[90]       ="AND,  R19, R31, R31";//delay, result in R19 = 0000000000000000
+iaddrbusout[90] = 64'h00000B78;
+//                op,   rm,  shamt,    rn,  rd
+instrbusin[90]  ={AND, R31,  zeroSham, R31, R19};
+daddrbusout[90] = dontcare;
+databusin[90]   = 64'bz;
+databusout[90]  = dontcare;
+
+//                op,   rd,  rn,  rm
+iname[91]       ="AND,  R18, R31, R31";//delay, result in R18 = 0000000000000000
+iaddrbusout[91] = 64'h00000B7C;
+//                op,   rm,  shamt,    rn,  rd
+instrbusin[91]  ={AND, R31,  zeroSham, R31, R18};
+daddrbusout[91] = dontcare;
+databusin[91]   = 64'bz;
+databusout[91]  = dontcare;
+
+//                op,  rd,  rn,  rm
+iname[92]       ="LSL, R20, R20, #1";//testing left shift, result in R20 = 0000000000006400
+iaddrbusout[92] = 64'h00000B80;
+//                op,  rm, shamt,      rn,  rd
+instrbusin[92]  ={LSL, RX, fourShamt, R20, R20};
+daddrbusout[92] = dontcare;
+databusin[92]   = 64'bz;
+databusout[92]  = dontcare;
+
+//                op,  rd,  rn,  rm
+iname[93]       ="LSR, R21, R21, #1";//testing right shift, result in R21 = 0000000000000048
+iaddrbusout[93] = 64'h00000B84;
+//                op,  rm, shamt,      rn,  rd
+instrbusin[93]  ={LSR, RX, fourShamt, R21, R21};
+daddrbusout[93] = dontcare;
+databusin[93]   = 64'bz;
+databusout[93]  = dontcare;
+
+
+//phase 4: testing load and store
+//                op,   rt,  rn,  DT_adr
+iname[94]       ="LDUR, R22, R31, #27";//testing load, result in R22 = 666 (from memory,databusin)
+iaddrbusout[94] = 64'h00000B88;
+//                op,   DT_ADDR,      ?,     rn,  rt
+instrbusin[94]  ={LDUR, 9'b000100111, 2'b00, R31, R22};
+daddrbusout[94] = 64'h0000000000000027;//used for LDUR
+databusin[94]   = 64'h0000000000000666;//used for LDUR
+databusout[94]  = dontcare;
+
+//                op,   rn,  DT_adr, rt
+iname[95]       ="STUR, R26, #21,   R26";//testing store, result for databusout in R26 = 8000000000000000 (to memory)
+//R20, + 21 =  6421
+iaddrbusout[95] = 64'h00000B8C;
+//                op,   DT_ADDR,      ?,     rn,  rt
+instrbusin[95]  ={STUR, 9'b000100001, 2'b00, R26, R26};
+daddrbusout[95] = 64'h8000000000000021;//used for STUR
+databusin[95]   = 64'bz;
+databusout[95]  = 64'h8000000000000000;//used for STUR
+
+//                op,   rd,  rn,  rm
+iname[96]       ="AND,  R19, R31, R31";//delay, result in R19 = 0000000000000000
+iaddrbusout[96] = 64'h00000B90;
+//                op,   rm,  shamt,    rn,  rd
+instrbusin[96]  ={AND, R31,  zeroSham, R31, R19};
+daddrbusout[96] = dontcare;
+databusin[96]   = 64'bz;
+databusout[96]  = dontcare;
+
+//                op,   rd,  rn,  rm
+iname[97]       ="AND,  R18, R31, R31";//delay, result in R18 = 0000000000000000
+iaddrbusout[97] = 64'h00000B94;
+//                op,   rm,  shamt,    rn,  rd
+instrbusin[97]  ={AND, R31,  zeroSham, R31, R19};
+daddrbusout[97] = dontcare;
+databusin[97]   = 64'bz;
+databusout[97]  = dontcare;
+
+//                op,   rd,  rn,  rm
+iname[98]       ="AND,  R17, R31, R31";//delay, result in R17 = 0000000000000000
+iaddrbusout[98] = 64'h00000B98;
+//                op,   rm,  shamt,    rn,  rd
+instrbusin[98]  ={AND, R31,  zeroSham, R31, R19};
+daddrbusout[98] = dontcare;
+databusin[98]   = 64'bz;
+databusout[98]  = dontcare;
+
+
+//phase 5: testing B branch
+//                op,  BR_address
+iname[99]       ="B,   #BEEF";//testing branch, calculated branch address should be
+// (64'h? + 64'h0000000000000BEEF = 64'h?)
+iaddrbusout[99] = 64'h00000B9C;
+//                op,  BR_address
+instrbusin[99]  ={B,   26'b00000000001011111011101111};
+daddrbusout[99] = dontcare;
+databusin[99]   = 64'bz;
+databusout[99]  = dontcare;
+
+//                op,   rd,  rn,  rm
+iname[100]       ="AND,  R19, R31, R31";//delay, result in R19 = 0000000000000000
+iaddrbusout[100] = 64'h00000BA0;
+//                op,   rm,  shamt,    rn,  rd
+instrbusin[100]  ={AND, R31,  zeroSham, R31, R19};
+daddrbusout[100] = dontcare;
+databusin[100]   = 64'bz;
+databusout[100]  = dontcare;
+
+//                op,  rd,  rn,  rm
+iname[101]       ="ADD, R20, R21, R20";//testing branch address result in R20 = 0000000000006448
+iaddrbusout[101] = 64'h00030758;
+//                op,  rm,   shamt,    rn,  rd
+instrbusin[101]  ={ADD, R20,  zeroSham, R21, R20};
+daddrbusout[101] = dontcare;
+databusin[101]   = 64'bz;
+databusout[101]  = dontcare;
+
+//copy of branch testing(@101)
+//phase 5: testing B branch
+//                op,  BR_address
+iname[102]       ="B,   #1337";//testing branch, calculated branch address should be
+// (64'h? + 64'h00000000000001337 = 64'h?)
+iaddrbusout[102] = 64'h0003075C;
+//                op,  BR_address
+instrbusin[102]  ={B,   26'b00000000000001001100110111};
+daddrbusout[102] = dontcare;
+databusin[102]   = 64'bz;
+databusout[102]  = dontcare;
+
+//                op,   rd,  rn,  rm
+iname[103]       ="AND,  R19, R31, R31";//delay, result in R19 = 0000000000000000
+iaddrbusout[103] = 64'h00030760;
+//                op,   rm,  shamt,    rn,  rd
+instrbusin[103]  ={AND, R31,  zeroSham, R31, R19};
+daddrbusout[103] = dontcare;
+databusin[103]   = 64'bz;
+databusout[103]  = dontcare;
+
+//                op,  rd,  rn,  rm
+iname[104]       ="ADD, R17, R31, R31";//testing branch address result in R17 = 0000000000000000
+iaddrbusout[104] = 64'h00035438;
+//                op,  rm,   shamt,    rn,  rd
+instrbusin[104]  ={ADD, R31,  zeroSham, R31, R17};
+daddrbusout[104] = dontcare;
+databusin[104]   = 64'bz;
+databusout[104]  = dontcare;
+
+
+//phase 6: testing B.EQ and B.NE branch
+//                op,   rd,  rn,   imm
+iname[105]        ="ADDI, R21, R31, #002";//testing addi, result in R21 = 0000000000000002
+iaddrbusout[105]  = 64'h0003543C;
+//                opcode rm/ALUImm rn   rd
+instrbusin[105]   ={ADDI,  12'h002,  R31, R21};
+daddrbusout[105]  = dontcare;
+databusin[105]    = 64'bz;
+databusout[105]   = dontcare;
+
+//                op,   rd,  rn,   imm
+iname[106]        ="ADDI, R22, R31, #002";//testing addi, result in R22 = 0000000000000002
+iaddrbusout[106]  = 64'h00035440;
+//                opcode rm/ALUImm rn   rd
+instrbusin[106]   ={ADDI,  12'h002,  R31, R22};
+daddrbusout[106]  = dontcare;
+databusin[106]    = 64'bz;
+databusout[106]   = dontcare;
+
+iname[107] =    "NOP";//nada
+iaddrbusout[107] = 64'h00035444;
+instrbusin[107]  = 64'b0;
+daddrbusout[107] = dontcare;
+databusin[107]   = 64'bz;
+databusout[107]  = dontcare;
+
+iname[108] =    "NOP";//nada
+iaddrbusout[108] = 64'h00035448;
+instrbusin[108]  = 64'b0;
+daddrbusout[108] = dontcare;
+databusin[108]   = 64'bz;
+databusout[108]  = dontcare;
+
+//TODO: find register to make this a fake branch for N bit
+//SUBIS for FAKE BRANCH
+//                op,   rd,  rn,  aluImm
+iname[109]       ="SUBIS,R31, R22, #001";//testing fake branch, this should NOT set the N high
+iaddrbusout[109] = 64'h0003544C;
+//                opcode rm/ALUImm rn   rd
+instrbusin[109]  ={SUBIS, 12'h001,  R22, R31};
+daddrbusout[109] = dontcare;
+databusin[109]   = 64'bz;
+databusout[109]  = dontcare;
+
+//FAKE BRANCH
+//                op,   COND_addr, rt
+iname[110]       ="B_EQ, #69420,    RX";//testing to NOT take the branch, N should be LOW
+iaddrbusout[110] = 64'h00035450;
+//                op,   COND_addr,               rt
+instrbusin[110]  ={B_EQ, 19'b1101001010000100000, RX};
+daddrbusout[110] = dontcare;
+databusin[110]   = 64'bz;
+databusout[110]  = dontcare;
+
+iname[111] =    "NOP";//nada
+iaddrbusout[111] = 64'h00035454;
+instrbusin[111]  = 64'b0;
+daddrbusout[111] = dontcare;
+databusin[111]   = 64'bz;
+databusout[111]  = dontcare;
+
+//use SUBS for branch test
+//                op,   rd,  rn,  rm
+iname[112]       ="ADDS, R31, R31, R31";//set z flag for BEQ,
+iaddrbusout[112] = 64'h00035458;
+//                op,   rm,   shamt,    rn,  rd
+instrbusin[112]  ={ADDS, R31,  zeroSham, R31, R31};
+daddrbusout[112] = dontcare;
+databusin[112]   = 64'bz;
+databusout[112]  = dontcare;
+
+//real branch for B.EQ (I have more of the best branches)
+//                op,   COND_addr,  rt
+iname[113]       ="B_EQ, #AE,        RX";//take the branch to instruction count 35714
+iaddrbusout[113] = 64'h0003545C;
+//                op,   COND_addr,               rt
+instrbusin[113]  ={B_EQ, 19'b0000000000010101110, RX};
+daddrbusout[113] = dontcare;
+databusin[113]   = 64'bz;
+databusout[113]  = dontcare;
+
+iname[114] =    "NOP";//nada
+iaddrbusout[114] = 64'h00035460;
+instrbusin[114]  = 64'b0;
+daddrbusout[114] = dontcare;
+databusin[114]   = 64'bz;
+databusout[114]  = dontcare;
+
+iname[115] =    "NOP";//nada
+iaddrbusout[115] = 64'h00035714;
+instrbusin[115]  = 64'b0;
+daddrbusout[115] = dontcare;
+databusin[115]   = 64'bz;
+databusout[115]  = dontcare;
+
+//use ADDS for branch test
+//                op,   rd,  rn,  rm
+iname[116]       ="ADDS, R31, R21, R20";//DONT set Z bit to high
+iaddrbusout[116] = 64'h00035718;
+//                op,   rm,   shamt,    rn,  rd
+instrbusin[116]  ={ADDS, R20,  zeroSham, R21, R31};
+daddrbusout[116] = dontcare;
+databusin[116]   = 64'bz;
+databusout[116]  = dontcare;
+
+//test B.EQ
+//                op,   COND_addr,  rt
+iname[117]       ="B_EQ, #96,        RX";//DONT take the branch to instruction count
+iaddrbusout[117] = 64'h0003571C;
+//                op,   COND_addr,               rt
+instrbusin[117]  ={B_EQ, 19'b0000000000010010110, RX};
+daddrbusout[117] = dontcare;
+databusin[117]   = 64'bz;
+databusout[117]  = dontcare;
+
+iname[118] =    "NOP";//nada
+iaddrbusout[118] = 64'h00035720;
+instrbusin[118]  = 64'b0;
+daddrbusout[118] = dontcare;
+databusin[118]   = 64'bz;
+databusout[118]  = dontcare;
+
+iname[119] =    "NOP";//nada
+iaddrbusout[119] = 64'h00035724;
+instrbusin[119]  = 64'b0;
+daddrbusout[119] = dontcare;
+databusin[119]   = 64'bz;
+databusout[119]  = dontcare;
+
+//copy of move and more branch testing(@117)
+//phase 8: testing MOVEZ and overflow bit
+//4 instructions to set registers to 0
+//                op,   rd,  rn,  rm
+iname[120]       ="AND,  R19, R31, R31";//delay, result in R19 = 0000000000000000
+iaddrbusout[120] = 64'h00035728;
+//                op,   rm,  shamt,    rn,  rd
+instrbusin[120]  ={AND, R31,  zeroSham, R31, R19};
+daddrbusout[120] = dontcare;
+databusin[120]   = 64'bz;
+databusout[120]  = dontcare;
+
+//                op,   rd,  rn,  rm
+iname[121]       ="AND,  R20, R31, R31";//delay, result in R20 = 0000000000000000
+iaddrbusout[121] = 64'h0003572C;
+//                op,   rm,  shamt,    rn,  rd
+instrbusin[121]  ={AND, R31,  zeroSham, R31, R20};
+daddrbusout[121] = dontcare;
+databusin[121]   = 64'bz;
+databusout[121]  = dontcare;
+
+//                op,   rd,  rn,  rm
+iname[122]       ="AND,  R21, R31, R31";//delay, result in R21 = 0000000000000000
+iaddrbusout[122] = 64'h00035730;
+//                op,   rm,  shamt,    rn,  rd
+instrbusin[122]  ={AND, R31,  zeroSham, R31, R21};
+daddrbusout[122] = dontcare;
+databusin[122]   = 64'bz;
+databusout[122]  = dontcare;
+
+//                op,   rd,  rn,  rm
+iname[123]       ="AND,  R22, R31, R31";//delay, result in R22 = 0000000000000000
+iaddrbusout[123] = 64'h00035734;
+//                op,   rm,  shamt,    rn,  rd
+instrbusin[123]  ={AND, R31,  zeroSham, R31, R22};
+daddrbusout[123] = dontcare;
+databusin[123]   = 64'bz;
+databusout[123]  = dontcare;
+
+//4 MOVZ commands
+//move 0 amt
+//                op,   move_amt,  MOV_imm,  rd
+iname[124]       ="MOVZ, move_0,    #FFFF,    R19";//testing move,  result in R19 = 000000000000FFFF
+iaddrbusout[124] = 64'h00035738;
+//                op,   move_amt,  MOV_imm,  rd
+instrbusin[124]  ={MOVZ, move_0,    16'hFFFF, R19};
+daddrbusout[124] = dontcare;
+databusin[124]   = 64'bz;
+databusout[124]  = dontcare;
+
+//move 1 amt
+//                op,   move_amt,  MOV_imm,  rd
+iname[125]       ="MOVZ, move_1,    #FFFF,    R20";//testing move,  result in R20 = 00000000FFFF0000
+iaddrbusout[125] = 64'h0003573C;
+//                op,   move_amt,  MOV_imm,  rd
+instrbusin[125]  ={MOVZ, move_1,    16'hFFFF, R20};
+daddrbusout[125] = dontcare;
+databusin[125]   = 64'bz;
+databusout[125]  = dontcare;
+
+//move 2 amt
+//                op,   move_amt,  MOV_imm,  rd
+iname[126]       ="MOVZ, move_2,    #FFFF,    R21";//testing move,  result in R21 = 0000FFFF00000000
+iaddrbusout[126] = 64'h00035740;
+//                op,   move_amt,  MOV_imm,  rd
+instrbusin[126]  ={MOVZ, move_2,    16'hFFFF, R21};
+daddrbusout[126] = dontcare;
+databusin[126]   = 64'bz;
+databusout[126]  = dontcare;
+
+//move 3 amt
+//                op,   move_amt,  MOV_imm,  rd
+iname[127]       ="MOVZ, move_3,    #6FFF,    R22";//testing move,  result in R22 = 6FFF000000000000
+iaddrbusout[127] = 64'h00035744;
+//                op,   move_amt,  MOV_imm,  rd
+instrbusin[127]  ={MOVZ, move_3,    16'h6FFF, R22};
+daddrbusout[127] = dontcare;
+databusin[127]   = 64'bz;
+databusout[127]  = dontcare;
+
+//have or for move 0 and move 1
+//                op,   rd,  rn,  rm
+iname[128]        ="ORR,  R23, R19, R20";//testing xor, result in R23 = 00000000FFFFFFFF
+iaddrbusout[128]  = 64'h00035748;
+//                op,  rm,  shamt,    rn,  rd
+instrbusin[128]   ={ORR, R20, zeroSham, R19, R23};
+daddrbusout[128]  = dontcare;
+databusin[128]    = 64'bz;
+databusout[128]   = dontcare;
+
+//delay
+iname[129] =    "NOP";//nada
+iaddrbusout[129] = 64'h0003574C;
+instrbusin[129]  = 64'b0;
+daddrbusout[129] = dontcare;
+databusin[129]   = 64'bz;
+databusout[129]  = dontcare;
+
+//have or for move 2 and move 3
+//                op,   rd,  rn,  rm
+iname[130]        ="ORR,  R24, R21, R22";//testing xor, result in R27 = 6FFFFFFF00000000
+iaddrbusout[130]  = 64'h00035750;
+//                op,  rm,  shamt,    rn,  rd
+instrbusin[130]   ={ORR, R22, zeroSham, R21, R24};
+daddrbusout[130]  = dontcare;
+databusin[130]    = 64'bz;
+databusout[130]   = dontcare;
+
+//delay
+iname[131] =    "NOP";//nada
+iaddrbusout[131] = 64'h00035754;
+instrbusin[131]  = 64'b0;
+daddrbusout[131] = dontcare;
+databusin[131]   = 64'bz;
+databusout[131]  = dontcare;
+
+//delay
+iname[132] =    "NOP";//nada
+iaddrbusout[132] = 64'h00035758;
+instrbusin[132]  = 64'b0;
+daddrbusout[132] = dontcare;
+databusin[132]   = 64'bz;
+databusout[132]  = dontcare;
+
+//have or for move(0|1) and move(2|3)
+//                op,   rd,  rn,  rm
+iname[133]        ="ORR,  R25, R23, R24";//testing or, result in R25 = 6FFFFFFFFFFFFFFF
+iaddrbusout[133]  = 64'h0003575C;
+//                op,  rm,  shamt,    rn,  rd
+instrbusin[133]   ={ORR, R24, zeroSham, R23, R25};
+daddrbusout[133]  = dontcare;
+databusin[133]    = 64'bz;
+databusout[133]   = dontcare;
+
+//dealy
+iname[134] =    "NOP";//nada
+iaddrbusout[134] = 64'h00035760;
+instrbusin[134]  = 64'b0;
+daddrbusout[134] = dontcare;
+databusin[134]   = 64'bz;
+databusout[134]  = dontcare;
+
+//delay
+iname[135] =    "NOP";//nada
+iaddrbusout[135] = 64'h00035764;
+instrbusin[135]  = 64'b0;
+daddrbusout[135] = dontcare;
+databusin[135]   = 64'bz;
+databusout[135]  = dontcare;
+
+//addis command to NOT trigger the V bit
+//                op,   rd,  rn,  aluImm
+iname[136]       ="ADDIS,R26, R25, #001";//for not V bit set, result in R26 = 7000000000000000
+iaddrbusout[136] = 64'h00035768;
+//                opcode rm/ALUImm rn   rd
+instrbusin[136]  ={ADDIS, 12'h001,  R25, R26};
+daddrbusout[136] = dontcare;
+databusin[136]   = 64'bz;
+databusout[136]  = dontcare;
+
+iname[137] =    "NOP";//nada
+iaddrbusout[137] = 64'h0003576C;
+instrbusin[137]  = 64'b0;
+daddrbusout[137] = dontcare;
+databusin[137]   = 64'bz;
+databusout[137]  = dontcare;
+
+iname[138] =    "NOP";//nada
+iaddrbusout[138] = 64'h00035770;
+instrbusin[138]  = 64'b0;
+daddrbusout[138] = dontcare;
+databusin[138]   = 64'bz;
+databusout[138]  = dontcare;
+
+
+//phase 9: testing B.LT and B.GE branch
+//7FFF+1 = N and V, 8000-1 = V
+//use SUBIS for the branch condition test (B.LT test)
+//DONT take branch
+//                op,   rd,  rn,  aluImm
+iname[139]       ="SUBIS,R26, R26,  #001";//result in R26 = 6FFFFFFFFFFFFFFF
+iaddrbusout[139] = 64'h00035774;
+//                opcode rm/ALUImm rn   rd
+instrbusin[139]  ={SUBIS, 12'h001,  R26, R26};
+daddrbusout[139] = dontcare;
+databusin[139]   = 64'bz;
+databusout[139]  = dontcare;
+
+//NOT TAKE branch
+//                op,   COND_addr, rt
+iname[140]       ="B_LT, #42,       RX";//new branch address is
+iaddrbusout[140] = 64'h00035778;
+//                op,   COND_addr,               rt
+instrbusin[140]  ={B_LT, 19'b0000000000001000010, RX};
+daddrbusout[140] = dontcare;
+databusin[140]   = 64'bz;
+databusout[140]  = dontcare;
+
+//delay
+iname[141] =    "NOP";//nada
+iaddrbusout[141] = 64'h0003577C;
+instrbusin[141]  = 64'b0;
+daddrbusout[141] = dontcare;
+databusin[141]   = 64'bz;
+databusout[141]  = dontcare;
+
+
+//delay
+iname[142] =    "NOP";//nada
+iaddrbusout[142] = 64'h00035780;
+instrbusin[142]  = 64'b0;
+daddrbusout[142] = dontcare;
+databusin[142]   = 64'bz;
+databusout[142]  = dontcare;
+
+//use ADDIS for the branch condition test B.GE test
+//                op,   rd,  rn,  aluImm
+iname[143]       ="ADDIS,R26, R26, #001";//result in R26 = 7000000000000000
+iaddrbusout[143] = 64'h00035784;
+//                opcode rm/ALUImm rn   rd
+instrbusin[143]  ={ADDIS, 12'h001,  R26, R26};
+daddrbusout[143] = dontcare;
+databusin[143]   = 64'bz;
+databusout[143]  = dontcare;
+
+//NOT TAKE branch
+//                op,   COND_addr, rt
+iname[144]       ="B_LT, #24,       RX";//new branch address is B60
+iaddrbusout[144] = 64'h00035788;
+//                op,   COND_addr,               rt
+instrbusin[144]  ={B_LT, 19'b0000000000000100100, RX};
+daddrbusout[144] = dontcare;
+databusin[144]   = 64'bz;
+databusout[144]  = dontcare;
+
+//delay
+iname[145] =    "NOP";//nada
+iaddrbusout[145] = 64'h0003578C;
+instrbusin[145]  = 64'b0;
+daddrbusout[145] = dontcare;
+databusin[145]   = 64'bz;
+databusout[145]  = dontcare;
+
+
+//delay
+iname[146] =    "NOP";//nada
+iaddrbusout[146] = 64'h00035790;
+instrbusin[146]  = 64'b0;
+daddrbusout[146] = dontcare;
+databusin[146]   = 64'bz;
+databusout[146]  = dontcare;
+
+//finishing up
+iname[147] =    "NOP";//nada
+iaddrbusout[147] = 64'h00035794;
+instrbusin[147]  = 64'b0;
+daddrbusout[147] = dontcare;
+databusin[147]   = 64'bz;
+databusout[147]  = dontcare;
+
+iname[148] =    "NOP";//nada
+iaddrbusout[148] = 64'h00035798;
+instrbusin[148]  = 64'b0;
+daddrbusout[148] = dontcare;
+databusin[148]   = 64'bz;
+databusout[148]  = dontcare;
+
+iname[149] =    "NOP";//nada
+iaddrbusout[149] = 64'h0003579C;
+instrbusin[149]  = 64'b0;
+daddrbusout[149] = dontcare;
+databusin[149]   = 64'bz;
+databusout[149]  = dontcare;
+
+//Random(@147)//TODO: test what the registers actually are
+//                op,   rd,  rn,  rm
+iname[150]        ="ORRI, R21, R24, #AAA";//testing ori, result in R21 = 0000000000000001//TODO
+iaddrbusout[150]  = 64'h000357A0;
+//                opcode rm/ALUImm rn   rd
+instrbusin[150]   ={ORRI,  12'h001,  R24, R21};
+daddrbusout[150]  = dontcare;
+databusin[150]    = 64'bz;
+databusout[150]   = dontcare;
+
+//                op,   rd,  rn,  rm
+iname[151]        ="EORI, R22, R20, #CCC";//testing xori, result in R22 = 0000000000000AAA//TODO
+iaddrbusout[151]  = 64'h000357A4;
+//                opcode rm/ALUImm rn   rd
+instrbusin[151]   ={EORI,  12'h000,  R20, R22};
+daddrbusout[151]  = dontcare;
+databusin[151]    = 64'bz;
+databusout[151]   = dontcare;
+
+//                op,   rd,  rn,  rm
+iname[152]        ="ANDI, R23, R0,  #321";//testing andi, result in R23 = 0000000000000002//TODO
+iaddrbusout[152]  = 64'h000357A8;
+//                opcode rm/ALUImm rn   rd
+instrbusin[152]   ={ANDI,  12'h003,  R0, R23};
+daddrbusout[152]  = dontcare;
+databusin[152]    = 64'bz;
+databusout[152]   = dontcare;
+
+//                op,   rd,  rn,  rm
+iname[153]        ="SUBI, R24, R20, #123";//testing subi, result in R24 = 0000000000000AA0//TODO
+iaddrbusout[153]  = 64'h000357AC;
+//                opcode rm/ALUImm rn   rd
+instrbusin[153]   ={SUBI,  12'h00A,  R20, R24};
+daddrbusout[153]  = dontcare;
+databusin[153]    = 64'bz;
+databusout[153]   = dontcare;
+
+//delay
+iname[154] =    "NOP";//nada
+iaddrbusout[154] = 64'h000357B0;
+instrbusin[154]  = 64'b0;
+daddrbusout[154] = dontcare;
+databusin[154]   = 64'bz;
+databusout[154]  = dontcare;
+
+//delay
+iname[155] =    "NOP";//nada
+iaddrbusout[155] = 64'h000357B4;
+instrbusin[155]  = 64'b0;
+daddrbusout[155] = dontcare;
+databusin[155]   = 64'bz;
+databusout[155]  = dontcare;
+
+//finishing up
+iname[156] =    "NOP";//nada
+iaddrbusout[156] = 64'h000357B8;
+instrbusin[156]  = 64'b0;
+daddrbusout[156] = dontcare;
+databusin[156]   = 64'bz;
+databusout[156]  = dontcare;
+
+//Done. 157 instructions
 
 //this number will be inacurate for a while(the number below)
 //also remember to set k down below to ntests - 1
 // (no. instructions) + (no. loads) + 2*(no. stores) = 35 + 2 + 2*7 = 51
-ntests = 88;//?
+ntests = 157;//?
 
 $timeformat(-9,1,"ns",12);
 
@@ -915,7 +1550,7 @@ initial begin
   #5
   $display ("Time=%t\n  clk=%b", $realtime, clk);
 
-for (k=0; k<= 87; k=k+1) begin
+for (k=0; k<= 156; k=k+1) begin
     clk=1;
     $display ("Time=%t\n  clk=%b", $realtime, clk);
     #2

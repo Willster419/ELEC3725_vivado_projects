@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="764230000fs"></ZoomStartTime>
-      <ZoomEndTime time="801460396fs"></ZoomEndTime>
-      <Cursor1Time time="772738000fs"></Cursor1Time>
+      <ZoomStartTime time="1448416000fs"></ZoomStartTime>
+      <ZoomEndTime time="1487455688fs"></ZoomEndTime>
+      <Cursor1Time time="1430000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="175"></NameColumnWidth>
-      <ValueColumnWidth column_width="118"></ValueColumnWidth>
+      <ValueColumnWidth column_width="114"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="23" />
+   <WVObjectSize size="20" />
    <wvobject fp_name="/ARMStb/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -38,43 +38,55 @@
       <obj_property name="ElementShortName">PCWire1[63:0]</obj_property>
       <obj_property name="ObjectShortName">PCWire1[63:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/ARMStb/dut/MOVImmWire1" type="array">
-      <obj_property name="ElementShortName">MOVImmWire1[63:0]</obj_property>
-      <obj_property name="ObjectShortName">MOVImmWire1[63:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ARMStb/dut/moveImmShftAmt" type="array">
-      <obj_property name="ElementShortName">moveImmShftAmt[5:0]</obj_property>
-      <obj_property name="ObjectShortName">moveImmShftAmt[5:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ARMStb/dut/movBit1" type="logic">
-      <obj_property name="ElementShortName">movBit1</obj_property>
-      <obj_property name="ObjectShortName">movBit1</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ARMStb/dut/AselectWire" type="array">
-      <obj_property name="ElementShortName">AselectWire[31:0]</obj_property>
-      <obj_property name="ObjectShortName">AselectWire[31:0]</obj_property>
+   <wvobject fp_name="/ARMStb/dut/DselectWire4" type="array">
+      <obj_property name="ElementShortName">DselectWire4[31:0]</obj_property>
+      <obj_property name="ObjectShortName">DselectWire4[31:0]</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/ARMStb/dut/abusWire1" type="array">
-      <obj_property name="ElementShortName">abusWire1[63:0]</obj_property>
-      <obj_property name="ObjectShortName">abusWire1[63:0]</obj_property>
+   <wvobject fp_name="/ARMStb/dut/ALUImmWire1" type="array">
+      <obj_property name="ElementShortName">ALUImmWire1[63:0]</obj_property>
+      <obj_property name="ObjectShortName">ALUImmWire1[63:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/ARMStb/dut/iaddrbusWire2" type="array">
-      <obj_property name="ElementShortName">iaddrbusWire2[63:0]</obj_property>
-      <obj_property name="ObjectShortName">iaddrbusWire2[63:0]</obj_property>
+   <wvobject fp_name="/ARMStb/dut/mux3Out" type="array">
+      <obj_property name="ElementShortName">mux3Out[63:0]</obj_property>
+      <obj_property name="ObjectShortName">mux3Out[63:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/ARMStb/dut/MOVImmWire2" type="array">
-      <obj_property name="ElementShortName">MOVImmWire2[63:0]</obj_property>
-      <obj_property name="ObjectShortName">MOVImmWire2[63:0]</obj_property>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/Aselect" type="array">
+      <obj_property name="ElementShortName">Aselect[31:0]</obj_property>
+      <obj_property name="ObjectShortName">Aselect[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/ARMStb/dut/moveImmShftAmtWire1" type="array">
-      <obj_property name="ElementShortName">moveImmShftAmtWire1[5:0]</obj_property>
-      <obj_property name="ObjectShortName">moveImmShftAmtWire1[5:0]</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/Bselect" type="array">
+      <obj_property name="ElementShortName">Bselect[31:0]</obj_property>
+      <obj_property name="ObjectShortName">Bselect[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/ARMStb/dut/mux6" type="array">
-      <obj_property name="ElementShortName">mux6[63:0]</obj_property>
-      <obj_property name="ObjectShortName">mux6[63:0]</obj_property>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/Dselect" type="array">
+      <obj_property name="ElementShortName">Dselect[31:0]</obj_property>
+      <obj_property name="ObjectShortName">Dselect[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/dbus" type="array">
+      <obj_property name="ElementShortName">dbus[63:0]</obj_property>
+      <obj_property name="ObjectShortName">dbus[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/abus" type="array">
+      <obj_property name="ElementShortName">abus[63:0]</obj_property>
+      <obj_property name="ObjectShortName">abus[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/bbus" type="array">
+      <obj_property name="ElementShortName">bbus[63:0]</obj_property>
+      <obj_property name="ObjectShortName">bbus[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/Reggie3/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/NZVC" type="array">
+      <obj_property name="ElementShortName">NZVC[3:0]</obj_property>
+      <obj_property name="ObjectShortName">NZVC[3:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject fp_name="/ARMStb/dut/dbusWire1_6" type="array">
+      <obj_property name="ElementShortName">dbusWire1_6[63:0]</obj_property>
+      <obj_property name="ObjectShortName">dbusWire1_6[63:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/ARMStb/dut/literallyLogic/a" type="array">
       <obj_property name="ElementShortName">a[63:0]</obj_property>
@@ -84,39 +96,13 @@
       <obj_property name="ElementShortName">b[63:0]</obj_property>
       <obj_property name="ObjectShortName">b[63:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/ARMStb/dut/literallyLogic/d" type="array">
-      <obj_property name="ElementShortName">d[63:0]</obj_property>
-      <obj_property name="ObjectShortName">d[63:0]</obj_property>
-   </wvobject>
    <wvobject fp_name="/ARMStb/dut/literallyLogic/S" type="array">
       <obj_property name="ElementShortName">S[2:0]</obj_property>
       <obj_property name="ObjectShortName">S[2:0]</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/ARMStb/dut/dbusWire1_5" type="array">
-      <obj_property name="ElementShortName">dbusWire1_5[63:0]</obj_property>
-      <obj_property name="ObjectShortName">dbusWire1_5[63:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ARMStb/dut/movBit2" type="logic">
-      <obj_property name="ElementShortName">movBit2</obj_property>
-      <obj_property name="ObjectShortName">movBit2</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ARMStb/dut/dbusWire1_6" type="array">
-      <obj_property name="ElementShortName">dbusWire1_6[63:0]</obj_property>
-      <obj_property name="ObjectShortName">dbusWire1_6[63:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ARMStb/dut/NZVC" type="array">
-      <obj_property name="ElementShortName">NZVC[3:0]</obj_property>
-      <obj_property name="ObjectShortName">NZVC[3:0]</obj_property>
-      <obj_property name="isExpanded"></obj_property>
-   </wvobject>
-   <wvobject fp_name="/ARMStb/dut/DselectWire4" type="array">
-      <obj_property name="ElementShortName">DselectWire4[31:0]</obj_property>
-      <obj_property name="ObjectShortName">DselectWire4[31:0]</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/ARMStb/dut/mux3Out" type="array">
-      <obj_property name="ElementShortName">mux3Out[63:0]</obj_property>
-      <obj_property name="ObjectShortName">mux3Out[63:0]</obj_property>
+   <wvobject fp_name="/ARMStb/dut/literallyLogic/d" type="array">
+      <obj_property name="ElementShortName">d[63:0]</obj_property>
+      <obj_property name="ObjectShortName">d[63:0]</obj_property>
    </wvobject>
 </wave_config>
