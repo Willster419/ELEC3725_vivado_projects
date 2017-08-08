@@ -66,6 +66,7 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   wire [31:0] ibusWire;//out for IF_ID
   //Aselect
   wire [31:0] AselectWire;//from rs, to regfile
+  wire [31:0] AselectWire1;
   //LEG_UPDATE: rs->rn
   wire [5:0] rn;//from ibusWire, to AselectWire
   //Bselect
@@ -313,6 +314,7 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
     11'b110100101??: begin
       //MOVZ
       movBit1 = 1;
+      SWire1 = 3'b100;
     end
     11'b10101010000: begin
       //ORR(or)
@@ -449,6 +451,8 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   end
   //write the select lines
   assign AselectWire = ((branchControlBit == 3'b110) || (branchControlBit == 3'b111))? 1<<rd :1 << rn;
+  //LEG_UPDATE: need AsSelectWire for the move command
+  assign AselectWire1 = (movBit1)? 32'h80000000 : AselectWire;
   //only write to Bselect for real if it's actually goign to use Bselect
   //i don't think this line matters but i feel like it's good pratice
   //assign BselectWire = immBit1?  32'hxxxxxxxx: 1 << rt;
@@ -464,7 +468,7 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //Rt for I, imm = true
   //assign DselectWire1 = immBit1? 1<<rm : 1<<rd;
   assign DselectWire1 = 1<<rd;
-  regfile Reggie3(.clk(clk),.Aselect(AselectWire),.Bselect(BselectWire2),.Dselect(DselectWire4),.abus(abusWire1),.bbus(bbusWire1),.dbus(mux3Out));
+  regfile Reggie3(.clk(clk),.Aselect(AselectWire1),.Bselect(BselectWire2),.Dselect(DselectWire4),.abus(abusWire1),.bbus(bbusWire1),.dbus(mux3Out));
   //update the muxWire4 controll if the instruction is BEQ or BNE, and if it is actually equal
   //mux4Controller = 1 if ((BEQ and abus == bbus) or (BNE and bbus != abus)), 0 otherwise
   //00 = noting, 01 = BEQ, 10 = BNE
