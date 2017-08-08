@@ -2,15 +2,15 @@
 module ARMStb();
 
 reg  [31:0] instrbus;
-reg  [31:0] instrbusin[0:81];
+reg  [31:0] instrbusin[0:87];
 wire [63:0] iaddrbus, daddrbus;
-reg  [63:0] iaddrbusout[0:81], daddrbusout[0:81];
+reg  [63:0] iaddrbusout[0:87], daddrbusout[0:87];
 wire [63:0] databus;
-reg  [63:0] databusk, databusin[0:81], databusout[0:81];
+reg  [63:0] databusk, databusin[0:87], databusout[0:87];
 reg         clk, reset;
 reg         clkd;
 reg [63:0] dontcare;
-reg [24*8:1] iname[0:81];
+reg [24*8:1] iname[0:87];
 integer error, k, ntests;
 
 //all opcode parameters to be used
@@ -41,7 +41,7 @@ parameter B      =  6'b000101;
 parameter B_EQ   =  8'b01010101;
 parameter B_NE   =  8'b01010110;
 parameter B_LT   =  8'b01010111;
-parameter B_GT   =  8'b01011000;
+parameter B_GE   =  8'b01011000;
 
 //register parameters
 parameter R0  = 5'b00000;
@@ -754,7 +754,7 @@ databusout[73]  = dontcare;
 
 //addis command to trigger the V bit
 //                op,   rd,  rn,  aluImm
-iname[74]       ="ADDIS,R26, R25, #001";//testing xor and V bit, result in R26 = 8000000000000000
+iname[74]       ="ADDIS,R26, R25, #001";//testing xor and V bit and N bit, result in R26 = 8000000000000000
 iaddrbusout[74] = 64'h000009B0;
 //                opcode rm/ALUImm rn   rd
 instrbusin[74]  ={ADDIS, 12'h001,  R25, R26};
@@ -776,96 +776,30 @@ daddrbusout[76] = dontcare;
 databusin[76]   = 64'bz;
 databusout[76]  = dontcare;
 
-/*
+
 //phase 9: testing B.LT and B.GE branch
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-*/
-
-//finishing up
-iname[77] =    "NOP";//nada
+//7FFF+1 = N and V, 8000-1 = V
+//use SUBIS for the branch condition test (B.LT test)
+//                op,   rd,  rn,  aluImm
+iname[77]       ="SUBIS,R26, R26,  #001";//result in R26 = 7FFFFFFFFFFFFFFF
 iaddrbusout[77] = 64'h000009BC;
-instrbusin[77]  = 64'b0;
+//                opcode rm/ALUImm rn   rd
+instrbusin[77]  ={SUBIS, 12'h001,  R26, R26};
 daddrbusout[77] = dontcare;
 databusin[77]   = 64'bz;
 databusout[77]  = dontcare;
 
-iname[78] =    "NOP";//nada
+//TAKE branch
+//                op,   COND_addr, rt
+iname[78]       ="B_LT, #42,       RX";//new branch address is AC8
 iaddrbusout[78] = 64'h000009C0;
-instrbusin[78]  = 64'b0;
+//                op,   COND_addr,               rt
+instrbusin[78]  ={B_LT, 19'b0000000000001000010, RX};
 daddrbusout[78] = dontcare;
 databusin[78]   = 64'bz;
 databusout[78]  = dontcare;
 
+//delay
 iname[79] =    "NOP";//nada
 iaddrbusout[79] = 64'h000009C4;
 instrbusin[79]  = 64'b0;
@@ -873,25 +807,77 @@ daddrbusout[79] = dontcare;
 databusin[79]   = 64'bz;
 databusout[79]  = dontcare;
 
+//delay
 iname[80] =    "NOP";//nada
-iaddrbusout[80] = 64'h000009C8;
+iaddrbusout[80] = 64'h00000AC8;
 instrbusin[80]  = 64'b0;
 daddrbusout[80] = dontcare;
 databusin[80]   = 64'bz;
 databusout[80]  = dontcare;
 
-iname[81] =    "NOP";//nada
-iaddrbusout[81] = 64'h000009CC;
-instrbusin[81]  = 64'b0;
+//use ADDIS for the branch condition test B.GE test
+//                op,   rd,  rn,  aluImm
+iname[81]       ="ADDIS,R26, R26, #001";//result in R26 = 8000000000000000
+iaddrbusout[81] = 64'h00000ACC;
+//                opcode rm/ALUImm rn   rd
+instrbusin[81]  ={ADDIS, 12'h001,  R26, R26};
 daddrbusout[81] = dontcare;
 databusin[81]   = 64'bz;
 databusout[81]  = dontcare;
+
+//TAKE branch
+//                op,   COND_addr, rt
+iname[82]       ="B_GE, #24,       RX";//new branch address is B60
+iaddrbusout[82] = 64'h00000AD0;
+//                op,   COND_addr,               rt
+instrbusin[82]  ={B_GE, 19'b0000000000000100100, RX};
+daddrbusout[82] = dontcare;
+databusin[82]   = 64'bz;
+databusout[82]  = dontcare;
+
+//delay
+iname[83] =    "NOP";//nada
+iaddrbusout[83] = 64'h00000AD4;
+instrbusin[83]  = 64'b0;
+daddrbusout[83] = dontcare;
+databusin[83]   = 64'bz;
+databusout[83]  = dontcare;
+
+//delay
+iname[84] =    "NOP";//nada
+iaddrbusout[84] = 64'h00000B60;
+instrbusin[84]  = 64'b0;
+daddrbusout[84] = dontcare;
+databusin[84]   = 64'bz;
+databusout[84]  = dontcare;
+
+//finishing up
+iname[85] =    "NOP";//nada
+iaddrbusout[85] = 64'h00000B64;
+instrbusin[85]  = 64'b0;
+daddrbusout[85] = dontcare;
+databusin[85]   = 64'bz;
+databusout[85]  = dontcare;
+
+iname[86] =    "NOP";//nada
+iaddrbusout[86] = 64'h00000B68;
+instrbusin[86]  = 64'b0;
+daddrbusout[86] = dontcare;
+databusin[86]   = 64'bz;
+databusout[86]  = dontcare;
+
+iname[87] =    "NOP";//nada
+iaddrbusout[87] = 64'h00000B6C;
+instrbusin[87]  = 64'b0;
+daddrbusout[87] = dontcare;
+databusin[87]   = 64'bz;
+databusout[87]  = dontcare;
 
 
 //this number will be inacurate for a while(the number below)
 //also remember to set k down below to ntests - 1
 // (no. instructions) + (no. loads) + 2*(no. stores) = 35 + 2 + 2*7 = 51
-ntests = 82;//?
+ntests = 88;//?
 
 $timeformat(-9,1,"ns",12);
 
@@ -929,7 +915,7 @@ initial begin
   #5
   $display ("Time=%t\n  clk=%b", $realtime, clk);
 
-for (k=0; k<= 81; k=k+1) begin
+for (k=0; k<= 87; k=k+1) begin
     clk=1;
     $display ("Time=%t\n  clk=%b", $realtime, clk);
     #2

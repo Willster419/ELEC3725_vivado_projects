@@ -516,7 +516,7 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //LEG_UPDATE: hook into the SLE wire for the LSL-LSR commands
   //assign dbusWire1_5 = (setControlBitsWire1 > 2'b00)? actualSLBit:dbusWire1;
   assign potentialLSLResult = dbusWire1 << shamtWire1;
-  assign potentialLSRResult = dbusWire1 >>> shamtWire1;
+  assign potentialLSRResult = dbusWire1 >> shamtWire1;
   //assumes LSR if not LSL. won't apply it to dbus unless it's actually a shift command
   //2'b01 = LSL, 2'b10 = LSR
   assign actualLSResult = (shiftBit2 == 2'b10)? potentialLSRResult:potentialLSLResult;
