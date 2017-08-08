@@ -41,6 +41,7 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   wire [2:0] branchControlBitWire3;
   reg takeBranch;
   wire takeBranchWire1;
+  wire takeCondBranchWire1;
   //program counter wires to be piped into the IF_ID stage
   wire [63:0] PCWire1;//form IF_ID, to branchCalcWire1
   //the wire for the branch calculation, part 1 (immediate sign extended, bit shifted by 2 for *4)
@@ -174,12 +175,12 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //latch for pipeline 0(PC)
   //module pipeline_0_latch(clk, iaddrbusWire1, iaddrbusOut);
   pipeline_0_latch PC(.clk(clk),.iaddrbusWire1(iaddrbusWire1),.iaddrbusOut(iaddrbusWire2),.reset(reset));
-  //assign the output
-  assign iaddrbus = mux4Controller? branchCalcWire2 : iaddrbusWire2;
   //iaddrbusWire4 gets feed into the IF_ID stage
   assign iaddrbusWire4 = iaddrbusWire2;
   //feed the pc back into itself. may update iaddrbusWire2 from the IF_ID stage
   assign iaddrbusWire1 = mux4Controller? branchCalcWire2 : iaddrbusWire2;
+  //assign the output
+  assign iaddrbus = iaddrbusWire1;
   //PIPELINE_0_END
   //latch for pipeline 1(IF_ID)
   //module pipeline_1_latch(clk, ibus, ibusWire);
@@ -425,7 +426,8 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //00 = noting, 01 = BEQ, 10 = BNE
   //CBNZ = 110, CBZ = 111
   //assign mux4Controller = ((!clk) && ((branchControlBit==2'b01) && (abusWire1 == bbusWire1)) || ((branchControlBit==2'b10) && (abusWire1!=bbusWire1)))? 1: 0;
-  assign takeBranchWire1 = ((!clk) && ((branchControlBit==3'b110) && (abusWire1 != 0)) || ((branchControlBit==3'b111) && (abusWire1 == 0)))? 1:takeBranch;
+  assign takeCondBranchWire1 = ((!clk) && ((branchControlBit==3'b110) && (abusWire1 != 0)) || ((branchControlBit==3'b111) && (abusWire1 == 0)))? 1:0;
+  assign takeBranchWire1 = takeCondBranchWire1|takeBranch;
   assign mux4Controller = ((!clk) && (branchControlBit > 3'b000) && (takeBranchWire1))? 1 : 0;
   //LEG_UPDATE: TODO: branch calculation is done in one step from above
   //the branch calculation
@@ -522,12 +524,16 @@ module pipeline_0_latch(clk, iaddrbusWire1, iaddrbusOut, reset);
 endmodule
 //phase 1 pipeline latch(IF_ID)
 module pipeline_1_latch(clk, ibus, ibusWire, PCIn, PCOut);
-  input [31:0] ibus, PCIn;
+  input [31:0] ibus;
+  input  [63:0] PCIn;
   input clk;
-  output [31:0] ibusWire, PCOut;
-  reg [31:0] ibusWire, PCOut;
+  output [31:0] ibusWire;
+  output [63:0] PCOut;
+  reg [31:0] ibusWire;
+  reg [63:0] PCOut;
   always @(posedge clk) begin
-    //EDIT: this is delayed branching, other instructions can be put in place
+    //EDIT: this is delayed branching, other instructions can be put in place\
+    //what did i mean by that? ^^
     ibusWire = ibus;
     PCOut = PCIn;
   end
