@@ -1,3 +1,4 @@
+//phase 9: testing B.LT and B.GE branch
 `timescale 1ns/10ps
 module ARMStb();
 
@@ -313,7 +314,7 @@ databusin[24]   = 64'bz;
 databusout[24]  = dontcare;
 
 
-//phase 4: testing load and store and overflow bit
+//phase 4: testing load and store
 //                op,   rt,  rn,  DT_adr
 iname[25]       ="LDUR, R22, R31, #1";//testing load, result in R22 = 42069 (from memory,databusin) [yes, really]
 iaddrbusout[25] = 64'h00000064;
@@ -873,10 +874,7 @@ daddrbusout[87] = dontcare;
 databusin[87]   = 64'bz;
 databusout[87]  = dontcare;
 
-
-//this number will be inacurate for a while(the number below)
 //also remember to set k down below to ntests - 1
-// (no. instructions) + (no. loads) + 2*(no. stores) = 35 + 2 + 2*7 = 51
 ntests = 88;//?
 
 $timeformat(-9,1,"ns",12);

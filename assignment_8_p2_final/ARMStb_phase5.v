@@ -1,3 +1,4 @@
+//phase 5: testing the branch command (basic forced branch)
 `timescale 1ns/10ps
 module ARMStb();
 
@@ -309,7 +310,7 @@ databusin[24]   = 64'bz;
 databusout[24]  = dontcare;
 
 
-//phase 4: testing load and store and overflow bit
+//phase 4: testing load and store
 //                op,   rt,  rn,  DT_adr
 iname[25]       ="LDUR, R22, R31, #1";//testing load, result in R22 = 42069 (from memory,databusin) [yes, really]
 iaddrbusout[25] = 64'h00000064;
@@ -386,270 +387,10 @@ daddrbusout[32] = dontcare;
 databusin[32]   = 64'bz;
 databusout[32]  = dontcare;
 
-/*
-//phase 6: testing B.EQ and B.NE branch
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-
-//phase 7: testing B.LT and B.GE branch
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//phase 8: testing CBNZ and CBZ branch
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-
-//phase 9: testing MOVEZ
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-
-//                op,   rd,  rn,  rm
-iname[18]       ="ADDS, R25, R21, R20";//testing ands, n flag, result in R25 = FFFFFFFFFFFFFFFE
-iaddrbusout[18] = 64'h00000048;
-//                op,   rm,  shamt,    rn,  rd
-instrbusin[18]  ={ADDS, R20, zeroSham, R21, R25};
-daddrbusout[18] = dontcare;
-databusin[18]   = 64'bz;
-databusout[18]  = dontcare;
-*/
 
 //finishing up
 iname[33] =    "NOP";//nada
 iaddrbusout[33] = 64'h00000424;
-//
 instrbusin[33]  = 64'b0;
 daddrbusout[33] = dontcare;
 databusin[33]   = 64'bz;
@@ -657,7 +398,6 @@ databusout[33]  = dontcare;
 
 iname[34] =    "NOP";//nada
 iaddrbusout[34] = 64'h00000428;
-//
 instrbusin[34]  = 64'b0;
 daddrbusout[34] = dontcare;
 databusin[34]   = 64'bz;
@@ -665,7 +405,6 @@ databusout[34]  = dontcare;
 
 iname[35] =    "NOP";//nada
 iaddrbusout[35] = 64'h0000042C;
-//
 instrbusin[35]  = 64'b0;
 daddrbusout[35] = dontcare;
 databusin[35]   = 64'bz;
@@ -673,7 +412,6 @@ databusout[35]  = dontcare;
 
 iname[36] =    "NOP";//nada
 iaddrbusout[36] = 64'h00000430;
-//
 instrbusin[36]  = 64'b0;
 daddrbusout[36] = dontcare;
 databusin[36]   = 64'bz;
@@ -681,17 +419,14 @@ databusout[36]  = dontcare;
 
 iname[37] =    "NOP";//nada
 iaddrbusout[37] = 64'h00000434;
-//
 instrbusin[37]  = 64'b0;
 daddrbusout[37] = dontcare;
 databusin[37]   = 64'bz;
 databusout[37]  = dontcare;
 
 
-//this number will be inacurate for a while(the number below)
 //also remember to set k down below to ntests - 1
-// (no. instructions) + (no. loads) + 2*(no. stores) = 35 + 2 + 2*7 = 51
-ntests = 38;//?
+ntests = 38;
 
 $timeformat(-9,1,"ns",12);
 
