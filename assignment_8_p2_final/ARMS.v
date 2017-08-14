@@ -542,7 +542,7 @@ module ARMS(ibus,clk,daddrbus,databus,reset,iaddrbus);
   //LEG_UPDATE: if store, bbusWire3 has the data to be written
   //if load, 
   assign bbusWire3_5 = (lwSwFlag3==2'b01)? databus: bbusWire3;//2'b01 = load
-  assign databus = (lwSwFlag3 == 2'b10)? bbusWire3: 32'hzzzzzzzz;//2'b10 = store
+  assign databus = (lwSwFlag3 == 2'b10)? bbusWire3: 64'hzzzzzzzz;//2'b10 = store
   assign daddrbus = dbusWire2;
   //PIPELINE_3_END
   //latch for pipeline 4(MEM_WB)
